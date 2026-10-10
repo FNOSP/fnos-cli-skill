@@ -1,6 +1,6 @@
 {
   "name": "fnos-cli-skill",
-  "version": "0.2.0",
+  "version": "0.2.5",
   "private": true,
   "description": "fnOS Skill and reviewable DSH bridge for the matching fnOS CLI package",
   "type": "module",
@@ -19,7 +19,7 @@
     }
   },
   "dependencies": {
-    "@fnnas-labs/fnos-cli": "0.2.0"
+    "@fnnas-labs/fnos-cli": "0.2.5"
   },
   "files": [
     "index.mjs",

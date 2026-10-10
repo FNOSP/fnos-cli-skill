@@ -1,6 +1,6 @@
 Third-party notices for fnOS CLI
-Cargo.lock SHA256: b652dfb9aeadde88e05c5a2eb61b32ff1250ae58ac636646fcbbb676af5e5d3d
-Cargo.toml SHA256: c39ce642ee8ddab06360aa44968ea150f5b2f249de7c173cb9095a9f5d656dd7
+Cargo.lock SHA256: 797f527b8ff65df28c23d4c9e1c09d499186950d3dfcbcf5273c37fb92fa8b28
+Cargo.toml SHA256: 8ecca2b4c39ff2cc9ac94c78d38f91042cef2d2916171308c4c066cd5a471010
 Rust toolchain: rustc 1.97.0 (2d8144b78 2026-07-07)
 Zig toolchain: 0.15.2
 

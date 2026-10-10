@@ -1,6 +1,6 @@
 # fnOS CLI Skill
 
-The fnOS Skill for fnOS CLI 0.2.0. This repository contains generated
+The fnOS Skill for fnOS CLI 0.2.5. This repository contains generated
 Skill documentation and reviewable integration files, not the native CLI source or binaries.
 
 ## Install the Skill
@@ -15,7 +15,7 @@ Node.js 18+ is required. The npm package provides both `fnos-cli` and
 the compatibility command `trim-cli`; both use the same session and profile.
 
 ```bash
-npx -y --package=@fnnas-labs/fnos-cli@0.2.0 fnos-cli install
+npx -y --package=@fnnas-labs/fnos-cli@0.2.5 fnos-cli install
 fnos-cli --version
 trim-cli --version
 ```
@@ -28,10 +28,10 @@ the global command, or `--skip-skill` to install only the command.
 After this release is published, install the public bridge into your DSH profile:
 
 ```bash
-dsh plugin --profile headless add github:fnnas-labs/fnos-cli-skill#v0.2.0
+dsh plugin --profile headless add github:fnnas-labs/fnos-cli-skill#v0.2.5
 ```
 
-The bridge depends on exactly `@fnnas-labs/fnos-cli@0.2.0`. Its bundle
+The bridge depends on exactly `@fnnas-labs/fnos-cli@0.2.5`. Its bundle
 loads `index.mjs`, which re-exports the dependency's adapter; that adapter registers
 the dependency's Skill and resolves the CLI from the dependency's resource directory.
 No global CLI is required for DSH commands. The checked-in `npm/dsh.mjs` is an
@@ -47,7 +47,7 @@ configuration environment and profile. Installation does not authenticate or aut
 Installation does not sign in. In your own interactive terminal, run:
 
 ```bash
-npx -y --package=@fnnas-labs/fnos-cli@0.2.0 fnos-cli --profile home --host <nas-host> login
+npx -y --package=@fnnas-labs/fnos-cli@0.2.5 fnos-cli --profile home --host <nas-host> login
 ```
 
 Open the authorization link, sign in and approve access in your browser, then
