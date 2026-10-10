@@ -5,7 +5,7 @@
   "description": "fnOS Skill and reviewable DSH bridge for the matching fnOS CLI package",
   "type": "module",
   "main": "index.mjs",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/fnnas-labs/fnos-cli-skill.git"
@@ -26,6 +26,7 @@
     "cordis.patch.yml",
     "npm/dsh.mjs",
     "skills/**",
-    "LICENSE"
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.txt"
   ]
 }

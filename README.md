@@ -67,6 +67,6 @@ fnos-cli --profile home system info
 
 Start with [the fnOS Skill](skills/fnos-cli/SKILL.md).
 
-## Release status
+## License
 
-No license grant is provided; this candidate is not approved for publication.
+The distributed fnOS CLI binaries, Skill documentation and integration code use the [MIT License](LICENSE). Third-party components retain their respective licenses and notices. This grant does not cover the fnOS operating system or server-side services; API access remains subject to authorization and the applicable service terms. Native CLI source is not distributed in this repository. Generating this candidate does not establish release approval.
