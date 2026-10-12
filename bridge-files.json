@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.6",
+  "version": "0.2.7",
   "files": [
     {
       "path": ".gitignore",
@@ -24,11 +24,11 @@
     },
     {
       "path": "package.json",
-      "sha256": "f86856de75fe22eb41e292d12f1f0b12f7a2cfebe4d46a147177f4e822218ad5"
+      "sha256": "bd0f26efe6dedf0d3eb464eaa3838bd4122960c88b1d06bb5b394f6fee420321"
     },
     {
       "path": "README.md",
-      "sha256": "0319fb8c6db5ebe5f82bea369cc9e6f8f237db8b5143f029b3232c5c46cc4fd1"
+      "sha256": "caa75525d30c0732ddfce2545397314e170a41d31a304ca208d92dd0e2dfe6b9"
     },
     {
       "path": "skills/fnos-cli/entries/trim-app.md",
@@ -172,15 +172,15 @@
     },
     {
       "path": "skills/fnos-cli/SKILL.md",
-      "sha256": "6f674be58e9d370acfb3217764cfc2bf78ae349f2c7ea340839f7a41f5642c9e"
+      "sha256": "b0560c6dcbd4ae9e3d39483038d6ddbd2b6de30890f1688ec75b8787a8e3df33"
     },
     {
       "path": "skills/fnos-cli/THIRD_PARTY_NOTICES.txt",
-      "sha256": "f6c910d6913a4836ecc7e37a82ab203ade6032889c67b50c5bc269628d7dcd80"
+      "sha256": "61022d6e2b4be635e46c78e04a77cffb4c70f83c3af3a6ba58a083c9f52b510a"
     },
     {
       "path": "THIRD_PARTY_NOTICES.txt",
-      "sha256": "f6c910d6913a4836ecc7e37a82ab203ade6032889c67b50c5bc269628d7dcd80"
+      "sha256": "61022d6e2b4be635e46c78e04a77cffb4c70f83c3af3a6ba58a083c9f52b510a"
     }
   ]
 }

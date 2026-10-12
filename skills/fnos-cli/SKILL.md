@@ -7,15 +7,21 @@ description: Use fnos-cli to sign in to and manage fnOS devices, including files
 
 ## CLI setup
 
-This Skill matches `@fnnas-labs/fnos-cli@0.2.6` and requires Node.js 18+.
-Check `fnos-cli --version` before use. Install the matching version if needed:
+This Skill uses the latest available fnOS CLI and requires Node.js 18+.
+Install or explicitly update the CLI:
 
 ```bash
-npm install -g @fnnas-labs/fnos-cli@0.2.6
+npm install -g @fnnas-labs/fnos-cli@latest
+fnos-cli --version
 ```
 
 Without a global installation, replace `fnos-cli` with
-`npx -y --package=@fnnas-labs/fnos-cli@0.2.6 fnos-cli`.
+`npx -y --package=@fnnas-labs/fnos-cli@latest fnos-cli`.
+Check the installed command's `--help` before using a documented capability.
+During npm processing, latest may still resolve to the previous version.
+If a command is unavailable, report the actual version and update later;
+do not assume every documented feature is already available.
+Existing installations do not update automatically.
 Installing a Skill does not install the CLI or sign in to a device.
 The user completes OAuth in an interactive terminal; the Agent never enters credentials or authorization codes.
 

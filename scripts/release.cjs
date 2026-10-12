@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { spawnSync } = require("node:child_process");
-const { readBridge, copyBridge, isBridgePath } = require("./bridge.cjs");
+const { readBridge } = require("./bridge.cjs");
 
 function hash(file, algorithm = "sha256", encoding = "hex") {
   return crypto.createHash(algorithm).update(fs.readFileSync(file)).digest(encoding);
@@ -103,40 +103,110 @@ function smoke(root, directory) {
   }
 }
 
-function publish(root, directory, runner = spawnSync, {
-  attempts = 31,
-  wait = () => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 10000)
-} = {}) {
+// Persist acceptance independently of registry visibility so retries do not
+// upload again while npm is still processing the same immutable package.
+function githubReceipt(root, release, execute = run) {
+  const name = "npm-publish-receipt.json";
+  const expected = { schemaVersion: 1, repository: release.repository, tag: release.tag,
+    packageName: release.packageName, version: release.version,
+    sourceCommit: release.sourceCommit, assets: release.assets };
+  const content = JSON.stringify(expected);
+  function temporary(action) {
+    fs.mkdirSync(path.join(root, ".tmp"), { recursive: true });
+    const dir = fs.mkdtempSync(path.join(root, ".tmp", "npm-receipt-"));
+    try { return action(path.join(dir, name)); }
+    finally { fs.rmSync(dir, { recursive: true, force: true }); }
+  }
+  return {
+    assertPublishOrder() {
+      // npm latest can still be stale after a newer version was accepted.
+      // Include receipted drafts whose Release completion has not succeeded.
+      forEachRelease(release.repository, execute, (item) => {
+        if (isNewerStableRelease(item, release) && (!item.draft
+          || item.assets?.some((asset) => asset.name === name))) {
+          throw new Error(`Release ${release.version} must be newer than accepted GitHub release ${item.tag_name}`);
+        }
+      });
+    },
+    exists() {
+      const metadata = JSON.parse(execute("gh", ["release", "view", release.tag, "--repo", release.repository, "--json", "assets"]));
+      if (!Array.isArray(metadata.assets)) throw new Error("Invalid release asset response");
+      const matches = metadata.assets.filter((asset) => asset.name === name);
+      if (!matches.length) return false;
+      if (matches.length !== 1) throw new Error("Duplicate npm acceptance receipts");
+      return temporary((file) => {
+        execute("gh", ["release", "download", release.tag, "--repo", release.repository, "--pattern", name, "--output", file]);
+        if (fs.readFileSync(file, "utf8") !== content) throw new Error("npm acceptance receipt differs from release assets");
+        return true;
+      });
+    },
+    save() {
+      temporary((file) => {
+        fs.writeFileSync(file, content);
+        try { execute("gh", ["release", "upload", release.tag, file, "--repo", release.repository]); }
+        catch { throw new Error("npm accepted the package, but saving its receipt failed; confirm registry visibility before retrying"); }
+      });
+    }
+  };
+}
+
+function forEachRelease(repository, execute, visit) {
+  for (let page = 1; ; page += 1) {
+    const releases = JSON.parse(execute("gh", ["api", `repos/${repository}/releases?per_page=100&page=${page}`]));
+    if (!Array.isArray(releases)) throw new Error("Invalid GitHub releases response");
+    for (const item of releases) visit(item);
+    if (releases.length < 100) break;
+  }
+}
+
+function isNewerStableRelease(item, release) {
+  if (!item || item.prerelease || !/^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(item.tag_name)) return false;
+  const compared = item.tag_name.slice(1).split(".").map(BigInt)
+    .map((value, i) => value - BigInt(release.version.split(".")[i])).find((value) => value !== 0n) || 0n;
+  return compared > 0n;
+}
+
+function completeRelease(root, directory, execute = run) {
   const release = verifyAssets(root, directory);
-  const tgz = path.join(directory, release.assets.find((asset) => asset.name.endsWith(".tgz")).name);
-  const integrity = `sha512-${hash(tgz, "sha512", "base64")}`;
-  const lookup = () => runner("npm", ["view", `${release.packageName}@${release.version}`, "--json", "--registry=https://registry.npmjs.org"], { encoding: "utf8" });
-  if (registryState(lookup(), release, integrity) === "published") {
-    console.log("Identical npm package already published; completing GitHub release");
+  if (!githubReceipt(root, release, execute).exists()) throw new Error("Missing npm acceptance receipt");
+  let newer = false;
+  forEachRelease(release.repository, execute, (item) => {
+    if (isNewerStableRelease(item, release) && !item.draft) newer = true;
+  });
+  execute("gh", ["release", "edit", release.tag, "--repo", release.repository,
+    "--draft=false", "--prerelease=false", `--latest=${!newer}`]);
+}
+
+function publish(root, directory, runner = spawnSync, receipt) {
+  const release = verifyAssets(root, directory);
+  receipt ||= githubReceipt(root, release);
+  if (receipt.exists()) {
+    console.log("npm acceptance already recorded for these assets; skipping publication.");
     return;
   }
+  const tgz = path.join(directory, release.assets.find((asset) => asset.name.endsWith(".tgz")).name);
+  const integrity = `sha512-${hash(tgz, "sha512", "base64")}`;
+  const lookup = runner("npm", ["view", `${release.packageName}@${release.version}`, "--json", "--registry=https://registry.npmjs.org"], { encoding: "utf8" });
+  if (registryState(lookup, release, integrity) === "published") {
+    receipt.save();
+    console.log("Identical npm package already published; skipping publication.");
+    return;
+  }
+  receipt.assertPublishOrder();
   const latest = runner("npm", ["view", release.packageName, "dist-tags.latest", "--json", "--registry=https://registry.npmjs.org"], { encoding: "utf8" });
   if (latest.error || latest.status !== 0) throw new Error("Cannot verify the current npm latest version");
   const previous = JSON.parse(latest.stdout);
   if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(previous)) throw new Error("Expected an existing stable major.minor.patch npm version");
-  const compare = release.version.split(".").map(Number).map((value, i) => value - Number(previous.split(".")[i])).find((value) => value !== 0) || 0;
-  if (compare <= 0) throw new Error(`Release ${release.version} must be newer than npm latest ${previous}`);
+  const compare = release.version.split(".").map(BigInt).map((value, i) => value - BigInt(previous.split(".")[i])).find((value) => value !== 0n) || 0n;
+  if (compare <= 0n) throw new Error(`Release ${release.version} must be newer than npm latest ${previous}`);
   const result = runner("npm", ["publish", tgz, "--ignore-scripts", "--access=public", "--tag=latest", "--registry=https://registry.npmjs.org"], { stdio: "inherit" });
   if (result.error || result.status !== 0) throw new Error("npm publish failed");
-  // npm can accept a publish before the version appears in registry reads.
-  // Retry only E404 visibility delays; authentication errors and hash drift fail closed.
-  for (let attempt = 0; attempt < attempts; attempt += 1) {
-    if (registryState(lookup(), release, integrity) === "published") return;
-    if (attempt + 1 < attempts) {
-      console.log(`npm accepted ${release.version}; waiting for registry visibility (${attempt + 1}/${attempts - 1})`);
-      wait();
-    }
-  }
-  throw new Error("npm accepted the package but the version is not yet verifiable; wait for registry processing before retrying the workflow");
+  receipt.save();
+  console.log(`npm accepted ${release.version}; registry processing may delay availability. No post-publish registry checks are performed.`);
 }
 
-// Registry metadata alone is insufficient: fetch with a fresh cache and check
-// the actual downloaded bytes before promoting the static Skill on main.
+// Optional manual check after registry propagation; not part of publication.
+// Fetch with a fresh cache and verify actual bytes before installation.
 function registrySmoke(root, directory, runner = run, smokeCheck = smoke) {
   const release = verifyAssets(root, directory);
   fs.mkdirSync(path.join(root, ".tmp"), { recursive: true });
@@ -152,59 +222,23 @@ function registrySmoke(root, directory, runner = run, smokeCheck = smoke) {
   } finally { fs.rmSync(scratch, { recursive: true, force: true }); }
 }
 
-function promote(root, directory, runner = run) {
-  const release = verifyAssets(root, directory);
-  const names = readBridge(root, release);
-  const registry = (...args) => runner("npm", ["view", ...args, "--json", "--registry=https://registry.npmjs.org"]);
-  const tgz = release.assets.find((asset) => asset.name.endsWith(".tgz"));
-  registryState({ status: 0, stdout: registry(`${release.packageName}@${release.version}`) }, release,
-    `sha512-${hash(path.join(directory, tgz.name), "sha512", "base64")}`);
-  if (JSON.parse(registry(release.packageName, "dist-tags.latest")) !== release.version) {
-    console.log("This release is no longer npm latest; leaving the public bridge unchanged.");
-    return false;
-  }
-  fs.mkdirSync(path.join(root, ".tmp"), { recursive: true });
-  const temporary = fs.mkdtempSync(path.join(root, ".tmp", "bridge-promote-"));
-  try {
-    const checkout = path.join(temporary, "repository");
-    const auth = ["-c", "credential.helper=", "-c", "credential.helper=!gh auth git-credential"];
-    runner("git", [...auth, "clone", "--branch", "main", "--single-branch", `https://github.com/${release.repository}.git`, checkout]);
-    const git = (...args) => runner("git", [...auth, ...args], { cwd: checkout }).trim();
-    const current = JSON.parse(fs.readFileSync(path.join(checkout, "package.json"), "utf8"));
-    if (current.name !== "fnos-cli-skill" || !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(current.version)) throw new Error("Unexpected public bridge on main");
-    const compared = current.version.split(".").map(Number).map((value, i) => value - Number(release.version.split(".")[i])).find(Boolean) || 0;
-    if (compared > 0) throw new Error("Refusing to downgrade public bridge documentation");
-    const tracked = git("ls-files").split("\n");
-    copyBridge(root, checkout, names, tracked);
-    git("add", "--", ...new Set([...names, ...tracked.filter(isBridgePath)]));
-    if (!git("diff", "--cached", "--name-only")) return true;
-    git("-c", "user.name=fnOS release bot", "-c", "user.email=fnos-release@users.noreply.github.com",
-      "commit", "-m", `docs: publish fnOS ${release.version} Skill`);
-    // Recheck after preparing the commit. Non-force push fails on concurrent
-    // main changes; retry the original tag without rebuilding its artifacts.
-    if (JSON.parse(registry(release.packageName, "dist-tags.latest")) !== release.version) throw new Error("npm latest changed during bridge promotion");
-    git("push", "origin", "HEAD:refs/heads/main");
-    return true;
-  } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
-}
-
 if (require.main === module) {
   try {
     const root = path.resolve(__dirname, "..");
     const directory = path.join(root, "artifacts");
     const action = process.argv[2];
-    if (["publish", "promote"].includes(action) && process.env.GITHUB_ACTIONS !== "true") {
-      throw new Error("Run publishing and bridge promotion in the GitHub release-tag workflow");
+    if (["publish", "complete"].includes(action) && process.env.GITHUB_ACTIONS !== "true") {
+      throw new Error("Run publishing in the GitHub release-tag workflow");
     }
     if (action === "verify") verifyAssets(root, directory);
     else if (action === "smoke") smoke(root, directory);
     else if (action === "publish") publish(root, directory);
+    else if (action === "complete") completeRelease(root, directory);
     else if (action === "registry-smoke") registrySmoke(root, directory);
-    else if (action === "promote") promote(root, directory);
-    else throw new Error("Usage: release.cjs verify|smoke|publish|registry-smoke|promote");
+    else throw new Error("Usage: release.cjs verify|smoke|publish|complete|registry-smoke");
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;
   }
 }
-module.exports = { hash, readRelease, verifyAssets, registryState, publish, smoke, registrySmoke, promote };
+module.exports = { hash, readRelease, verifyAssets, registryState, publish, smoke, registrySmoke, githubReceipt, completeRelease };

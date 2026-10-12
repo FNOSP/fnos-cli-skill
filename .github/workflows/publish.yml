@@ -74,19 +74,10 @@ jobs:
         run: gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --dir artifacts
       - name: Verify and publish the exact tarball with OIDC
         env:
+          GH_TOKEN: ${{ github.token }}
           NPM_CONFIG_PROVENANCE: ${{ github.event.repository.private && 'false' || 'true' }}
         run: node scripts/release.cjs publish
-      - name: Download and verify the published npm package
-        run: node scripts/release.cjs registry-smoke
-      - name: Promote the verified static Skill and audit snapshot
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: node scripts/release.cjs promote
       - name: Complete GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          npm_latest="$(npm view @fnnas-labs/fnos-cli dist-tags.latest --registry=https://registry.npmjs.org)"
-          latest=false
-          if [ "$npm_latest" = "${GITHUB_REF_NAME#v}" ]; then latest=true; fi
-          gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false --prerelease=false --latest="$latest"
+        run: node scripts/release.cjs complete

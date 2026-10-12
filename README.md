@@ -1,6 +1,6 @@
 # fnOS CLI Skill
 
-The fnOS Skill for fnOS CLI 0.2.6. This repository contains generated
+The fnOS Skill for the latest available fnOS CLI. This repository contains generated
 Skill documentation and reviewable integration files, not the native CLI source or binaries.
 
 ## Install the Skill
@@ -9,19 +9,25 @@ Skill documentation and reviewable integration files, not the native CLI source 
 npx skills add fnnas-labs/fnos-cli-skill --skill fnos-cli -g
 ```
 
-## Install the matching CLI
+## Install the CLI
 
 Node.js 18+ is required. The npm package provides both `fnos-cli` and
 the compatibility command `trim-cli`; both use the same session and profile.
 
 ```bash
-npx -y --package=@fnnas-labs/fnos-cli@0.2.6 fnos-cli install
+npm install -g @fnnas-labs/fnos-cli@latest
 fnos-cli --version
-trim-cli --version
 ```
 
-Use `install --project` for a project-scoped Skill, `--skill-only` to skip
-the global command, or `--skip-skill` to install only the command.
+Or run without a global installation:
+
+```bash
+npx -y --package=@fnnas-labs/fnos-cli@latest fnos-cli --help
+```
+
+Existing installations do not update automatically. Repeat the installation
+command to update explicitly. During npm processing, latest may still select
+the previous version; check the installed version and command help.
 
 ## Install with DSH
 
@@ -38,9 +44,10 @@ automatically; the package manager's lockfile may retain an earlier version.
 Update dependencies explicitly to select a newer release. A bridge Git tag does
 not pin the CLI; use an explicit npm version for reproducible installations.
 
-The static Skill documents and checked-in `npm/dsh.mjs` describe npm version
-0.2.6. The adapter file is an audit snapshot, not the runtime entry;
-a newer installed dependency may contain a newer adapter. DSH instructions and
+The static Skill documents may be synchronized before npm finishes processing.
+Check the installed version and command help before using new capabilities.
+The checked-in `npm/dsh.mjs` is an audit snapshot, not the runtime entry;
+the installed dependency supplies the actual adapter. DSH instructions and
 OAuth commands use the actual installed package's version. Installing the bundle
 alone is not Skill discovery: the adapter explicitly registers it.
 
@@ -53,7 +60,7 @@ configuration environment and profile. Installation does not authenticate or aut
 Installation does not sign in. In your own interactive terminal, run:
 
 ```bash
-npx -y --package=@fnnas-labs/fnos-cli@0.2.6 fnos-cli --profile home --host <nas-host> login
+npx -y --package=@fnnas-labs/fnos-cli@latest fnos-cli --profile home --host <nas-host> login
 ```
 
 Open the authorization link, sign in and approve access in your browser, then
