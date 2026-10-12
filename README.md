@@ -1,6 +1,6 @@
 # fnOS CLI Skill
 
-The fnOS Skill for fnOS CLI 0.2.5. This repository contains generated
+The fnOS Skill for fnOS CLI 0.2.6. This repository contains generated
 Skill documentation and reviewable integration files, not the native CLI source or binaries.
 
 ## Install the Skill
@@ -15,7 +15,7 @@ Node.js 18+ is required. The npm package provides both `fnos-cli` and
 the compatibility command `trim-cli`; both use the same session and profile.
 
 ```bash
-npx -y --package=@fnnas-labs/fnos-cli@0.2.5 fnos-cli install
+npx -y --package=@fnnas-labs/fnos-cli@0.2.6 fnos-cli install
 fnos-cli --version
 trim-cli --version
 ```
@@ -25,18 +25,24 @@ the global command, or `--skip-skill` to install only the command.
 
 ## Install with DSH
 
-After this release is published, install the public bridge into your DSH profile:
+Install the public bridge into your DSH profile:
 
 ```bash
-dsh plugin --profile headless add github:fnnas-labs/fnos-cli-skill#v0.2.5
+dsh plugin --profile headless add github:fnnas-labs/fnos-cli-skill
 ```
 
-The bridge depends on exactly `@fnnas-labs/fnos-cli@0.2.5`. Its bundle
-loads `index.mjs`, which re-exports the dependency's adapter; that adapter registers
-the dependency's Skill and resolves the CLI from the dependency's resource directory.
-No global CLI is required for DSH commands. The checked-in `npm/dsh.mjs` is an
-exact audit snapshot of the adapter in that npm release, not the runtime entry.
-Installing the bundle alone is not Skill discovery: the adapter explicitly registers it.
+The bridge requests `@fnnas-labs/fnos-cli@latest` when its dependency is resolved.
+Its `index.mjs` loads the installed dependency's adapter, Skill and package-local
+CLI together. No global CLI is required. Existing installations do not update
+automatically; the package manager's lockfile may retain an earlier version.
+Update dependencies explicitly to select a newer release. A bridge Git tag does
+not pin the CLI; use an explicit npm version for reproducible installations.
+
+The static Skill documents and checked-in `npm/dsh.mjs` describe npm version
+0.2.6. The adapter file is an audit snapshot, not the runtime entry;
+a newer installed dependency may contain a newer adapter. DSH instructions and
+OAuth commands use the actual installed package's version. Installing the bundle
+alone is not Skill discovery: the adapter explicitly registers it.
 
 The Agent first loads `fnos-cli`, then follows its package-local invocation instructions.
 Login remains a user action in a real terminal, with the same DSH Host, system user,
@@ -47,7 +53,7 @@ configuration environment and profile. Installation does not authenticate or aut
 Installation does not sign in. In your own interactive terminal, run:
 
 ```bash
-npx -y --package=@fnnas-labs/fnos-cli@0.2.5 fnos-cli --profile home --host <nas-host> login
+npx -y --package=@fnnas-labs/fnos-cli@0.2.6 fnos-cli --profile home --host <nas-host> login
 ```
 
 Open the authorization link, sign in and approve access in your browser, then
