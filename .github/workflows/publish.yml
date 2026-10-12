@@ -1,0 +1,92 @@
+name: Publish fnOS CLI
+run-name: fnOS ${{ github.ref_name }} (publish=${{ inputs.publish }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to npm and finalize the GitHub Release
+        type: boolean
+        default: false
+        required: true
+
+permissions:
+  contents: read
+
+# Serialize every version so an older run cannot move npm latest backwards.
+concurrency:
+  group: fnos-npm-release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: startsWith(github.ref, 'refs/tags/v')
+    # GitHub only exposes draft releases to callers with push access.
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - name: Download immutable release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "$env:GITHUB_REF_NAME" --repo "$env:GITHUB_REPOSITORY" --dir artifacts
+        if: runner.os == 'Windows'
+      - name: Download immutable release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --dir artifacts
+        if: runner.os != 'Windows'
+      - name: Verify hashes, package metadata, native CLI and Skill installation
+        run: node scripts/release.cjs smoke
+
+  publish:
+    needs: verify
+    if: inputs.publish
+    runs-on: ubuntu-latest
+    environment: npm-production
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - name: Install npm with Trusted Publishing support
+        run: npm install --global npm@11 --ignore-scripts --no-audit --no-fund
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --dir artifacts
+      - name: Verify and publish the exact tarball with OIDC
+        env:
+          NPM_CONFIG_PROVENANCE: ${{ github.event.repository.private && 'false' || 'true' }}
+        run: node scripts/release.cjs publish
+      - name: Download and verify the published npm package
+        run: node scripts/release.cjs registry-smoke
+      - name: Promote the verified static Skill and audit snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release.cjs promote
+      - name: Complete GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          npm_latest="$(npm view @fnnas-labs/fnos-cli dist-tags.latest --registry=https://registry.npmjs.org)"
+          latest=false
+          if [ "$npm_latest" = "${GITHUB_REF_NAME#v}" ]; then latest=true; fi
+          gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false --prerelease=false --latest="$latest"
