@@ -23,9 +23,9 @@ Device validation follows `../reference/workflows/device-validation.md`.
   only for isolated tests or CI. `TRIM_CLI_SESSION_STORAGE=ask-file` explicitly
   asks the user before a lower-trust file fallback after secure-storage failure.
 - OAuth PKCE is the login flow. The user handles credentials and 2FA in the browser.
-- Production login is a single interactive `login`: the user opens the link,
-  signs in, authorizes, and pastes the one-time code into the CLI. The Agent does
-  not enter credentials, approve access or read browser codes.
+- Agent login follows `../reference/oauth.md`: generate the link with
+  `login --authorize-only`, wait for the user's browser authorization and returned
+  code, then exchange it with `login --code`. The user needs no terminal.
 - For DSH, log in on the same Host, system user and configuration environment,
   with the same `--profile`. Sessions do not automatically transfer to remote
   browsers, SSH shells or containers. macOS background Keychain access may need approval.
@@ -41,13 +41,18 @@ Device validation follows `../reference/workflows/device-validation.md`.
 
 ## Commands
 
-The user runs login in their own interactive terminal:
+The Agent runs the two login calls separately, waiting for the user-provided code
+between them and keeping the same target and profile:
 
 ```bash
-fnos-cli --profile home --host <host> --port <port> login
-fnos-cli --profile home --host <host> --port <port> login --no-open
-fnos-cli --host <host> --scheme https --tls-insecure login
+fnos-cli --profile home --host <host> --port <port> login --authorize-only
+fnos-cli --profile home --host <host> --port <port> login --code '<code>'
 fnos-cli --profile home system info
+```
+
+Other commands, only when needed for the user's task (not onboarding steps):
+
+```bash
 fnos-cli --profile home raw appcgi.system.getInfo --json '{"language":"zh-CN"}'
 fnos-cli --profile home raw appcgi.network.ssh.switch --json '{"enable":true}' --yes
 fnos-cli --profile home logout

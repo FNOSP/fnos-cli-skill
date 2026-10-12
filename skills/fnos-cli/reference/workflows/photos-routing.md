@@ -5,10 +5,10 @@ Read the Photos reference after selecting a command.
 
 ## 1. Authentication
 
-Photos reuses the current profile's proxy session. Without a valid session, the
-user runs interactive `fnos-cli login`, opens the link, signs in, authorizes
-and pastes the one-time code into the CLI. The Agent does not enter credentials,
-approve access or read browser codes.
+Photos reuses the current profile's proxy session. Without a valid session,
+follow `../oauth.md`: the Agent generates the authorization link, the user
+authorizes in their browser and sends back the code, and the Agent completes
+the exchange. The user needs no terminal; credentials and consent stay in the browser.
 
 For multiple devices, select `--profile`, `--host` and `--port` explicitly.
 Sessions are not interchangeable across devices.

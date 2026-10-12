@@ -11,18 +11,39 @@
 ## 登录
 
 ```bash
-fnos-cli --profile home --host <host> --port <port> login
+fnos-cli --profile home --host <host> --port <port> login --authorize-only
+fnos-cli --profile home --host <host> --port <port> login --code '<code>'
 ```
 
-生产环境只使用这一条交互式流程：CLI 输出 `/signin` 授权链接并保持运行；用户自行在浏览器
-输入账号密码、确认授权、复制页面显示的一次性 code，再粘贴到 CLI 的
-`Authorization code` 提示。CLI 随后完成 token 交换。
+Agent 默认使用两段式授权，用户不必运行终端：
 
-Agent 不代填账号密码、不自动点击授权、不读取页面 code，也不把 code 放进命令参数。CLI 无法
-自动打开浏览器时可添加 `--no-open`，但用户授权和交互式输入步骤不变。
+1. 确认用户指定的 NAS 和 profile；已有有效 session 时直接复用。新目标未知时先询问。
+2. Agent 执行 `login --authorize-only`，把返回的 `authorization_url` 原样作为链接发给用户。
+   `authorization_pending=true` 仅代表等待授权，不是已登录；此命令不等待终端输入。
+3. 用户自行打开链接、输入账号密码、确认授权，并把页面显示的一次性 code 发回当前 Agent。
+4. Agent 收到用户明确提供的 code 后，用同一执行主机、系统用户、配置目录、profile 和连接参数
+   执行 `login --code '<code>'`。code 作为独立参数传递；使用 shell 时正确引用，不拼接为 shell 语法。
+5. 确认 `token_persisted=true`、`refresh_token_persisted=true`，再用同一 profile 执行
+   `system info` 等只读请求，成功后才报告已连接并继续用户任务。
 
-授权 URL 包含 PKCE challenge、client、scope 和 device 参数，不包含 `redirect_uri`。pending
-verifier 按 profile 隔离，过期后必须重新运行完整的交互式 `login`。授权 code 只能交换一次。
+Agent 不代填账号密码、不自动点击授权、不读取浏览器页面 code；仅处理用户主动发来的 code。
+code 会经过聊天和工具调用记录，也可能在本机进程参数中可见；它是敏感的一次性凭据，不能承诺
+聊天侧不留存。不要在回复中复述、额外写文件/日志、开启 shell trace 或转发给其他人。
+access/refresh token 和 PKCE verifier 留在 CLI 的存储中，不读取或发送到聊天。
+
+授权 URL 包含 PKCE challenge、client、scope 和 device 参数，不包含 `redirect_uri`，不要自行
+改写。每个 profile 只保留一个 pending verifier；等待 code 期间不要再次生成链接，否则会覆盖
+原 pending。两个命令均显式保持相同 host/port/scheme/TLS 选项；新 session 尚未保存时，不能
+依赖默认目标。远端明文 HTTP 两步都需要 `--scheme http --allow-insecure-http`。
+
+code 只能交换一次，有效期 5 分钟。pending 过期、丢失、目标不匹配或 code 交换失败时停止，
+解释原因并重新发起授权，不循环重试旧 code；若响应表明 token 已保存而用户摘要/探测失败，
+先检查现有 session 的只读调用，不再次交换已消费的 code。多个并行授权使用不同 profile。
+DSH 两步都使用 Skill 提供的同包启动器，不需要交互 TTY；切换 Host/SSH/容器时须在实际执行
+环境重新授权，不能假定本机 session 自动共享。macOS Keychain 可能需要用户批准系统提示。
+
+用户主动选择手动终端时仍可运行普通 `login`，在 CLI 提示中输入 code；`--no-open` 仅关闭
+自动打开浏览器，不改变这条手动流程。Agent 默认流程不要求用户打开终端。
 `trim.basic` 不属于当前可申请列表，CLI 不显式申请。旧的 `file photo` scope 或缺少当前模块
 所需 scope 的 session 不再兼容，必须重新登录；refresh token 不能用来扩展原授权范围。
 
@@ -40,12 +61,13 @@ refresh 返回新 refresh token 时替换旧值，未返回时保留旧值。刷
 已被其他进程刷新时直接使用新 token，不覆盖较新的 session。
 
 存储仍可能在请求发出后失效。若 refresh 成功但最终 session 写入失败，不要反复使用旧 refresh
-token；服务端可能已完成轮换，应重新执行交互式 OAuth 登录。
+token；服务端可能已完成轮换，应重新发起上述 OAuth 授权。
 
 ## Session 与 logout
 
 session 保存 access/refresh token、过期时间、OAuth client/device/scope 和用户摘要。
 `logout` 清理当前 profile 的 session 和 pending 文件，不承诺远端撤销令牌。
 
-失败时重新执行交互式 OAuth 登录；不回退到 CLI 用户名密码、2FA 或旧 token 恢复流程。授权
-code、code verifier、access token 和 refresh token 不应出现在命令参数、输出、日志或错误信息中。
+需要重新登录时走上述授权流程，不回退到 CLI 用户名密码、2FA 或旧 token 恢复。只有用户
+回传的 code 可用于 `login --code`；code verifier、access token 和 refresh token 不放进命令参数，
+也不输出到聊天或日志。

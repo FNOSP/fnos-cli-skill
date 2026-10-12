@@ -1,24 +1,24 @@
 # Device validation
 
-Use this workflow for interactive OAuth, minimal probes and read-after-write verification.
+Use this workflow for Agent-assisted OAuth, minimal probes and read-after-write verification.
 
 ## 1. User authorization
 
-Production validation uses interactive OAuth PKCE:
+Follow `../oauth.md` for Agent-assisted OAuth PKCE:
 
-1. The user runs `fnos-cli --profile <profile> --host <host> --port <port> login`
-   in their own interactive terminal.
-2. The CLI displays an authorization link and waits.
+1. The Agent runs `fnos-cli --profile <profile> --host <host> --port <port> login --authorize-only`.
+2. Share the returned authorization link with the user; wait for their reply.
 3. The user opens the link, signs in and approves access in the browser.
-4. The user copies the one-time code into the CLI's `Authorization code` prompt.
-5. The CLI exchanges the code and saves the selected profile's session.
+4. The user sends the one-time code back to the Agent, without opening a terminal.
+5. The Agent runs `login --code '<code>'` with the same profile and connection
+   options, then checks token persistence and a read-only request.
 
-The Agent does not collect credentials, approve access, read browser codes or
-pass codes as arguments. Add `--no-open` if the browser cannot open automatically;
-the remaining steps are unchanged. Authorization URLs omit `redirect_uri`.
+Keep credentials and consent in the user's browser. Only exchange the code the
+user explicitly supplies; do not repeat it in replies or save it in extra logs.
+Authorization URLs omit `redirect_uri`.
 
-For DSH, the login terminal must share the DSH Host, system user, configuration
-environment and `--profile`. Remote browsers, SSH shells and containers do not
+For DSH, both login calls and subsequent requests must share the DSH Host, system
+user, configuration environment and `--profile`. Remote browsers, SSH shells and containers do not
 automatically inherit that session. macOS background Keychain access may need
 system approval.
 
@@ -26,7 +26,7 @@ system approval.
 
 Before any write:
 
-1. Confirm interactive login established the intended profile's session; do not
+1. Confirm the code exchange established the intended profile's session; do not
    preconfigure or rotate accounts as part of validation.
 2. Run one or two read-only commands for the target module to check connectivity
    and permissions.

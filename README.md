@@ -52,25 +52,32 @@ OAuth commands use the actual installed package's version. Installing the bundle
 alone is not Skill discovery: the adapter explicitly registers it.
 
 The Agent first loads `fnos-cli`, then follows its package-local invocation instructions.
-Login remains a user action in a real terminal, with the same DSH Host, system user,
-configuration environment and profile. Installation does not authenticate or authorize writes.
+The Agent generates an authorization link; the user authorizes in the browser and
+sends the one-time code back to the Agent. Both CLI calls use the same DSH Host,
+system user, configuration environment and profile; no user terminal is required.
+Installation does not authenticate or authorize writes.
 
-## Sign in interactively
+## Sign in with your Agent
 
-Installation does not sign in. In your own interactive terminal, run:
+Installation does not sign in. Tell your Agent the NAS target and profile; it runs:
 
 ```bash
-npx -y --package=@fnnas-labs/fnos-cli@latest fnos-cli --profile home --host <nas-host> login
+npx -y --package=@fnnas-labs/fnos-cli@latest fnos-cli --profile home --host <nas-host> login --authorize-only
 ```
 
-Open the authorization link, sign in and approve access in your browser, then
-paste the one-time code into the CLI prompt. Use `--no-open` if needed.
-Never send passwords, authorization codes, access tokens or refresh tokens to an Agent.
+Open the link the Agent provides, sign in and approve access in your browser,
+then send the one-time code back to that Agent. You do not need a terminal.
+The Agent runs `login --code '<code>'` with the same connection options and
+profile, then checks token persistence and a read-only request. Follow
+[the OAuth guide](skills/fnos-cli/reference/oauth.md) for the complete workflow.
+Codes are sensitive: chat, tool records and process arguments may retain them.
+Never send passwords, access tokens or refresh tokens to an Agent.
 
-For DSH, use a terminal on the same DSH Host, as the same system user,
-with the same configuration environment and `--profile`. Remote browsers,
-SSH shells and containers do not automatically share that session. On macOS,
-background Keychain access may require system approval.
+Both login calls and later requests must use the same execution host, system
+user, configuration environment and `--profile`. DSH uses its package-local
+launcher for both calls without a TTY. SSH shells and containers do not
+automatically share sessions. On macOS, Keychain access may require system approval.
+Plain `login` remains available if you prefer manual terminal authorization.
 
 After authorization, verify a read-only request:
 

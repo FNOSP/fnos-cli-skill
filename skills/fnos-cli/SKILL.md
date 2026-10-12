@@ -23,7 +23,7 @@ If a command is unavailable, report the actual version and update later;
 do not assume every documented feature is already available.
 Existing installations do not update automatically.
 Installing a Skill does not install the CLI or sign in to a device.
-The user completes OAuth in an interactive terminal; the Agent never enters credentials or authorization codes.
+For OAuth, follow the two-step flow below: the Agent shares a link and exchanges the code the user sends back. The user handles credentials and consent only in the browser.
 
 
 The command-line client for fnOS. It uses the HTTP API proxy for
@@ -55,12 +55,14 @@ product-specific task not listed below, inspect the descriptions in `entries/`.
   credentials and 2FA in their browser; never collect passwords or old tokens.
 - OAuth uses `client_id=YJNMPJUGA9` and the CLI's required `trim.*` scopes. See
   `reference/oauth.md` for the full list. Authorization URLs omit `redirect_uri`.
-- Production login is interactive: the CLI displays a link and waits while the
-  user signs in, approves access, copies the one-time code, and pastes it into the
-  CLI's `Authorization code` prompt. The Agent does not fill credentials, approve
-  access, read browser codes, or pass codes in command arguments.
-- Run login in the actual execution environment. DSH requires the same Host,
-  system user, configuration environment and profile as the user's login terminal.
+- Agent login uses two noninteractive calls: `login --authorize-only` generates
+  a link; the user opens it, authorizes in the browser and sends the one-time code
+  back to the Agent; `login --code <code>` completes the exchange. The user does
+  not need a terminal. Follow `reference/oauth.md` before starting or resuming login.
+- The user alone enters credentials and approves access in the browser. Accept
+  only the code they explicitly send; keep it out of replies, files and extra logs.
+- Run both login calls and later commands on the same Host, as the same system
+  user, with the same configuration environment, profile and NAS target.
   Remote browsers, SSH shells and containers do not automatically share sessions.
 - Sessions hold access/refresh tokens, expiry and OAuth device information. Store
   secrets only in platform secure storage or an explicitly selected file backend;
@@ -96,21 +98,29 @@ HTTPS 5667 for remote IPs, and HTTPS 443 for domain names.
 
 ## Authentication
 
-The user runs these commands in their own interactive terminal:
+The Agent runs the first command, shares the returned `authorization_url`, and
+waits for the user to send the one-time code. Only then run the second command
+with exactly the same connection options and profile:
 
 ```bash
-fnos-cli --profile home --host <host> --port <port> --scheme https login
-fnos-cli --profile home login --refresh
-fnos-cli --profile home logout
+fnos-cli --profile home --host <host> --port <port> --scheme https login --authorize-only
+fnos-cli --profile home --host <host> --port <port> --scheme https login --code '<code>'
+fnos-cli --profile home system info
 ```
 
-`login` displays the authorization link, attempts to open a browser, and waits
-for the user to paste a one-time code. `login --no-open` keeps the same flow
-without opening the browser automatically. For a remote plain HTTP device:
+Keep only one pending authorization per profile; do not generate another link
+while waiting for its code. A pending response is not a completed login. Confirm
+token persistence and a read-only request before reporting success.
+
+For a remote plain HTTP device, use the same HTTP options in both calls:
 
 ```bash
-fnos-cli --profile home --host <host> --port 5666 --scheme http --allow-insecure-http login --no-open
+fnos-cli --profile home --host <host> --port 5666 --scheme http --allow-insecure-http login --authorize-only
+fnos-cli --profile home --host <host> --port 5666 --scheme http --allow-insecure-http login --code '<code>'
 ```
+
+Plain `login` (optionally `--no-open`) remains available for users who explicitly
+prefer manual terminal login; it is not required for Agent onboarding.
 
 ## Common read-only commands
 

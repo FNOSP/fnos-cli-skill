@@ -6,17 +6,17 @@ fnos-cli 使用 OAuth 2.0 Authorization Code + PKCE 建立代理 session，不�
 2FA 登录或旧 token 恢复链。CLI 按用户、文件读写、下载、应用中心、相册、系统、日志、存储和
 Docker 模块申请 `trim.*` scope；完整列表见 `oauth.md`。
 
-生产环境只使用交互式登录：
+Agent 使用两段式授权，详细边界和故障处理见 `oauth.md`：
 
 ```bash
-fnos-cli --profile home --host <host> --port <port> login
+fnos-cli --profile home --host <host> --port <port> login --authorize-only
+fnos-cli --profile home --host <host> --port <port> login --code '<code>'
 ```
 
-CLI 输出授权链接并在当前 profile 保存一次性 PKCE verifier，然后保持运行并等待
-`Authorization code`。用户自行在浏览器输入账号密码、确认授权、复制页面显示的 code，再粘贴
-到 CLI 提示。不要自动填写账号密码、点击授权或读取页面 code，也不要把 code 放进命令参数。
-无法自动打开浏览器时添加 `--no-open`。授权 URL 不包含 `redirect_uri`，不要自行追加；token
-交换成功后一次性 PKCE 文件会被删除。
+Agent 先把 CLI 返回的链接发给用户，用户自行在浏览器登录、授权并把一次性 code 发回 Agent，
+Agent 再执行第二条命令；两步使用同一执行环境、profile 和连接参数。用户无需打开终端。
+不要代填账号密码、点击授权或读取页面 code；只接收用户主动提供的 code，不额外回显或记录。
+授权 URL 不包含 `redirect_uri`，不要自行追加；token 交换成功并保存后清理一次性 pending。
 
 Session 保存以下认证信息：
 
@@ -131,7 +131,7 @@ trusted-device/2FA 登录流程。
 ## 错误处理
 
 - `saved proxy session is required`：先完成 OAuth 登录。
-- OAuth pending 缺失或过期：重新运行完整的交互式 `login`，不要单独拼装兑换命令。
+- OAuth pending 缺失或过期：按 `oauth.md` 重新执行 `login --authorize-only`，等待用户回传新 code 后再交换，不重试旧 code。
 - refresh 失败或 refresh token 缺失：重新运行 OAuth 登录，不回退到账号密码。
 - refresh 返回后 session 最终写入失败：不要盲目复用旧 refresh token；它可能已被轮换，应重新登录。
 - 权限错误：先用 `user info` 确认 `admin`，不要自动提升权限。
