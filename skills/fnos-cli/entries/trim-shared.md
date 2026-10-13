@@ -17,6 +17,8 @@ Device validation follows `../reference/workflows/device-validation.md`.
 - An explicit `--port` takes precedence; the CLI then resolves only the scheme.
 - Omitted connection options reuse the saved host, port, scheme and TLS settings.
   Profile fallback, login writes and logout cleanup affect only the selected profile.
+- For supported Connect device subdomains, CLI HTTP requests automatically include
+  `mode=relay`; other targets do not receive this cookie.
 - Self-signed HTTPS may need explicit `--tls-insecure`; remote plain HTTP needs
   explicit `--allow-insecure-http`.
 - Sessions default to platform secure storage. Use `TRIM_CLI_SESSION_STORAGE=file`

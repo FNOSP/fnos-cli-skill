@@ -36,6 +36,10 @@ access/refresh token 和 PKCE verifier 留在 CLI 的存储中，不读取或发
 原 pending。两个命令均显式保持相同 host/port/scheme/TLS 选项；新 session 尚未保存时，不能
 依赖默认目标。远端明文 HTTP 两步都需要 `--scheme http --allow-insecure-http`。
 
+目标为已支持的 Connect 设备子域名时，CLI 对目标的 OAuth 和代理 HTTP 请求自动附加
+`mode=relay` Cookie；其他目标不附加。此 Cookie 只用于 CLI 发出的请求，
+不改变用户在浏览器中打开的授权链接。
+
 code 只能交换一次，有效期 5 分钟。pending 过期、丢失、目标不匹配或 code 交换失败时停止，
 解释原因并重新发起授权，不循环重试旧 code；若响应表明 token 已保存而用户摘要/探测失败，
 先检查现有 session 的只读调用，不再次交换已消费的 code。多个并行授权使用不同 profile。
