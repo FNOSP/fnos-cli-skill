@@ -67,6 +67,9 @@ product-specific task not listed below, inspect the descriptions in `entries/`.
 - Sessions hold access/refresh tokens, expiry and OAuth device information. Store
   secrets only in platform secure storage or an explicitly selected file backend;
   keep them out of ordinary output, logs and third-party messages.
+- When token exchange includes a device access code, the CLI stores it with the
+  session and adds gateway access headers automatically. The Agent never needs
+  the device code.
 - Tokens refresh near expiry. HTTP 401 from `/ogh/ac/w` or `/ogh/ac/h/*` triggers
   one refresh and one retry. Repeated 401 or refresh failure requires a new OAuth
   login, not a retry loop or a legacy authentication fallback.

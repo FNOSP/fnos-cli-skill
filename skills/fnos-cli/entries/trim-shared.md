@@ -32,6 +32,9 @@ Device validation follows `../reference/workflows/device-validation.md`.
   with the same `--profile`. Sessions do not automatically transfer to remote
   browsers, SSH shells or containers. macOS background Keychain access may need approval.
 - Access tokens refresh near expiry; `login --refresh` can request refresh.
+- When token exchange returns a device access code, the CLI keeps it in the selected
+  session and sends the required headers on protected requests. Do not ask the
+  user to paste that device code into chat; a gateway challenge requires login again.
 - Refresh checks writable session storage first; failed preflight preserves the
   old session and sends no refresh. Concurrent processes reuse newer profile
   sessions rather than overwriting rotated tokens.

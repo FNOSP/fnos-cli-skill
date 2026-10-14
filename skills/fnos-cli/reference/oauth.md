@@ -30,6 +30,9 @@ Agent 不代填账号密码、不自动点击授权、不读取浏览器页面 c
 code 会经过聊天和工具调用记录，也可能在本机进程参数中可见；它是敏感的一次性凭据，不能承诺
 聊天侧不留存。不要在回复中复述、额外写文件/日志、开启 shell trace 或转发给其他人。
 access/refresh token 和 PKCE verifier 留在 CLI 的存储中，不读取或发送到聊天。
+若设备启用安全访问码，token 兑换响应的 `x_access_code` 也由 CLI 保存在同一 profile 的受控 session 中；
+Agent 不接收、不复述此值。该响应值已编码，CLI 会原样用作请求头，不再编码。CLI 对后续受保护 HTTP 请求自动附加 `X-Access-Code` 与
+`X-Access-Source: app`，不发送 `x-device-id`。浏览器中的访问码页面仍由用户自行完成。
 
 授权 URL 包含 PKCE challenge、client、scope 和 device 参数，不包含 `redirect_uri`，不要自行
 改写。每个 profile 只保留一个 pending verifier；等待 code 期间不要再次生成链接，否则会覆盖
@@ -63,13 +66,15 @@ refresh 返回新 refresh token 时替换旧值，未返回时保留旧值。刷
 写回当前 profile，确认真实存储目标可写；预检失败时不会发送 refresh 请求，因此不会消耗可能轮换的 refresh token。
 `ask-file` 的存储选择只会询问一次，并沿用到本次刷新提交。多进程获得锁后会重新读取 session，
 已被其他进程刷新时直接使用新 token，不覆盖较新的 session。
+refresh 不轮换设备安全码，CLI 在请求中携带已保存的访问码头，并在更新 OAuth token 时保留安全码。
+响应带 `x-trim-safe-code-challenge` 时按设备访问码拦截处理，不触发 OAuth 401 refresh。HTTP 429 表示验证受限，应等待后重试；503 表示验证服务不可用；403 可能是策略拒绝或临时封锁。网关返回 200 挑战页时无法进一步判定原因，CLI 提示重新登录取得有效码。
 
 存储仍可能在请求发出后失效。若 refresh 成功但最终 session 写入失败，不要反复使用旧 refresh
 token；服务端可能已完成轮换，应重新发起上述 OAuth 授权。
 
 ## Session 与 logout
 
-session 保存 access/refresh token、过期时间、OAuth client/device/scope 和用户摘要。
+session 保存 access/refresh token、可选设备安全码、过期时间、OAuth client/device/scope 和用户摘要。
 `logout` 清理当前 profile 的 session 和 pending 文件，不承诺远端撤销令牌。
 
 需要重新登录时走上述授权流程，不回退到 CLI 用户名密码、2FA 或旧 token 恢复。只有用户
