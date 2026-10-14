@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.3.1",
+  "version": "0.3.2",
   "files": [
     {
       "path": ".gitignore",
@@ -24,7 +24,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "264b8a9738d8d3e963a69ed975547a2d32eaa0d2d3252c38185847198b569a84"
+      "sha256": "0da10563a952760b17619b5fe883b74677b62e87127594b27d07204d00530502"
     },
     {
       "path": "README.md",
@@ -176,11 +176,11 @@
     },
     {
       "path": "skills/fnos-cli/THIRD_PARTY_NOTICES.txt",
-      "sha256": "ffe005af2cff2f69a5771513918b60fcc0dffc00405286636713f8940b897773"
+      "sha256": "d37dbffc7d8785d831e2026324a63000e51010adbe8ee505113a684b9e6ef66b"
     },
     {
       "path": "THIRD_PARTY_NOTICES.txt",
-      "sha256": "ffe005af2cff2f69a5771513918b60fcc0dffc00405286636713f8940b897773"
+      "sha256": "d37dbffc7d8785d831e2026324a63000e51010adbe8ee505113a684b9e6ef66b"
     }
   ]
 }
