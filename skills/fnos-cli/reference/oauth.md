@@ -46,7 +46,7 @@ Agent 不接收、不复述此值。该响应值已编码，CLI 会原样用作�
 code 只能交换一次，有效期 5 分钟。pending 过期、丢失、目标不匹配或 code 交换失败时停止，
 解释原因并重新发起授权，不循环重试旧 code；若响应表明 token 已保存而用户摘要/探测失败，
 先检查现有 session 的只读调用，不再次交换已消费的 code。多个并行授权使用不同 profile。
-DSH 两步都使用 Skill 提供的同包启动器，不需要交互 TTY；切换 Host/SSH/容器时须在实际执行
+两步都使用 Skill 提供的同包启动器，不需要交互 TTY；切换 Host/SSH/容器时须在实际执行
 环境重新授权，不能假定本机 session 自动共享。macOS Keychain 可能需要用户批准系统提示。
 
 用户主动选择手动终端时仍可运行普通 `login`，在 CLI 提示中输入 code；`--no-open` 仅关闭
@@ -54,7 +54,7 @@ DSH 两步都使用 Skill 提供的同包启动器，不需要交互 TTY；切�
 `trim.basic` 不属于当前可申请列表，CLI 不显式申请。旧的 `file photo` scope 或缺少当前模块
 所需 scope 的 session 不再兼容，必须重新登录；refresh token 不能用来扩展原授权范围。
 
-## Refresh
+## 刷新授权
 
 ```bash
 fnos-cli --profile home login --refresh
@@ -72,7 +72,7 @@ refresh 不轮换设备安全码，CLI 在请求中携带已保存的访问码�
 存储仍可能在请求发出后失效。若 refresh 成功但最终 session 写入失败，不要反复使用旧 refresh
 token；服务端可能已完成轮换，应重新发起上述 OAuth 授权。
 
-## Session 与 logout
+## 登录状态与退出
 
 session 保存 access/refresh token、可选设备安全码、过期时间、OAuth client/device/scope 和用户摘要。
 `logout` 清理当前 profile 的 session 和 pending 文件，不承诺远端撤销令牌。
@@ -80,3 +80,7 @@ session 保存 access/refresh token、可选设备安全码、过期时间、OAu
 需要重新登录时走上述授权流程，不回退到 CLI 用户名密码、2FA 或旧 token 恢复。只有用户
 回传的 code 可用于 `login --code`；code verifier、access token 和 refresh token 不放进命令参数，
 也不输出到聊天或日志。
+
+## 新版升级
+
+本产品仅使用 `FNOS_CLI_*` 配置变量并保存独立登录状态。升级后重新授权；不迁移、读取或删除旧登录数据。其他产品的同名 profile 不共享状态。

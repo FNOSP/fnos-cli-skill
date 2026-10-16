@@ -16,35 +16,35 @@
 
 每个端点包含以下部分（按顺序）：
 
-### Endpoint
+### 端点
 端点的完整名称（如 `appcgi.file.ls`）
 
-### Purpose
+### 用途
 端点的功能说明
 
-### Trim CLI Mapping
-对应的 fnos-cli 命令形式；如果未实现则标注 `Not implemented in fnos-cli yet`
+### CLI 映射
+对应的 fnos-cli 命令形式；如果未实现则标注 `fnos-cli 尚未实现`
 
-### Request
+### 请求
 请求参数表格：
 
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束与说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
 
-**Location 取值：**
+**位置取值：**
 - `body`：JSON 请求体顶层字段
 - `query`：URL 查询参数
 - `path`：URL 路径变量
 - `header`：协议头字段
 - `wrapped body`：嵌套在请求体内的字段（如 `data.body.*`）
 
-### Response
+### 响应
 响应字段表格：
 
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+| 字段 | 始终存在 | 类型 | 含义 | 条件与说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
 
-### Protocol Notes
+### 协议说明
 影响自动化的协议行为：
 - 认证要求（token / session / signature）
 - 数据包终止行为（`result`、多包流式响应）
@@ -54,10 +54,10 @@
 - 签名前会在 JSON 中注入 `si`（如可用）
 - 特殊封装结构（如嵌套 `data.body`）
 
-### Field Semantics
+### 字段语义
 字段语义的详细说明和约束
 
-### Errors
+### 错误
 常见错误码和错误信息
 
 ## 路径约定

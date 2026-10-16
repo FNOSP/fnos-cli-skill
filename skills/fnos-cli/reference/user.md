@@ -20,7 +20,7 @@ Agent 再执行第二条命令；两步使用同一执行环境、profile 和连
 
 Session 保存以下认证信息：
 
-| Field | Meaning |
+| 字段 | 含义 |
 | --- | --- |
 | `accessToken` | 代理业务请求的 Bearer token |
 | `refreshToken` | access token 刷新凭据 |
@@ -51,10 +51,10 @@ fnos-cli --profile home logout
 fnos-cli user info
 fnos-cli user list
 fnos-cli user list --mode group --group Users
-fnos-cli user request user.list --json '{"limit":100,"offset":0}'
+fnos-cli user request user.list --json '{"limit":100,"offset":0}' --yes
 ```
 
-| Command | Endpoint | Important output |
+| 命令 | 端点 | 重要输出 |
 | --- | --- | --- |
 | `user info` | `user.info` | `userInfo.user`、`uid`、`admin` |
 | `user list` | `user.list` | 用户数组、总数和分页字段 |
@@ -75,7 +75,7 @@ fnos-cli user unfreeze <user> --yes
 fnos-cli user set-admin <user> --admin true --yes
 ```
 
-| Command | Endpoint | Main request fields |
+| 命令 | 端点 | 主要请求字段 |
 | --- | --- | --- |
 | `user add` | `user.add` | `user`、`password`、`groups`、可选联系信息和管理员标记 |
 | `user mod` | `user.mod` | `user` 加显式提供的变更字段 |
@@ -103,7 +103,7 @@ fnos-cli user group add-users <group> --users <user> --yes
 fnos-cli user group del-users <group> --users <user> --yes
 ```
 
-| Command | Endpoint | Main request fields |
+| 命令 | 端点 | 主要请求字段 |
 | --- | --- | --- |
 | `group list` | `user.groupList` | 无 |
 | `group info` | `user.groupInfo` | `group` |
@@ -122,7 +122,7 @@ fnos-cli user group del-users <group> --users <user> --yes
 
 ```bash
 fnos-cli user login-devices
-fnos-cli user request user.listLoginDevice
+fnos-cli user request user.listLoginDevice --yes
 ```
 
 登录设备列表是用户管理数据，不参与 CLI 的 OAuth PKCE 登录。不要根据设备列表尝试旧的

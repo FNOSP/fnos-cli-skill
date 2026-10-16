@@ -1,14 +1,14 @@
-# Photos reference
+# 照片参考
 
-## Authentication
+## 授权
 
 Photos 使用当前 profile 的系统 access token，通过 `/ogh/ac/h/*uri` 调用原生 HTTP API。当前命令目标
 必须与该 profile 保存的 session 目标一致。没有有效 session 时先执行 OAuth `login`；Photos
 不需要额外的应用登录或独立签名。
 
-## Command index
+## 命令索引
 
-| Command | Output |
+| 命令 | 输出 |
 | --- | --- |
 | `photos folders` | 已加入相册扫描的目录、扫描状态和照片/视频数量 |
 | `photos search <keyword>` | 条件搜索的匹配项、时间线和总数 |
@@ -16,7 +16,7 @@ Photos 使用当前 profile 的系统 access token，通过 `/ogh/ac/h/*uri` 调
 | `photos preview <id>` | 指定尺寸的绝对预览地址 |
 | `photos request <method> <path>` | 未封装端点的原始 HTTP 与业务响应 |
 
-## Response rules
+## 响应规则
 
 命名命令会检查 HTTP 状态和业务信封；HTTP 非 2xx、`code != 0` 或缺失 `data` 都会失败。
 命名搜索和详情还会把相对的 `*Url` 字段转换为绝对地址。
@@ -33,7 +33,7 @@ Photos 使用当前 profile 的系统 access token，通过 `/ogh/ac/h/*uri` 调
 Agent 必须同时确认 `httpStatus` 位于 `200..299` 且 `response.code == 0`。不能只根据 CLI
 退出码判断通用请求成功。
 
-## Watched folders
+## 扫描目录
 
 ```bash
 fnos-cli photos folders
@@ -41,7 +41,7 @@ fnos-cli photos folders
 
 请求 `GET /p/api/v1/photo/folder/list`，没有业务参数。输出 `list[]` 的主要字段：
 
-| Field | Type | Meaning |
+| 字段 | 类型 | 含义 |
 | --- | --- | --- |
 | `folderId` | integer | Photos 扫描目录 ID |
 | `folderPath` | string | fnOS 目录路径 |
@@ -57,7 +57,7 @@ fnos-cli photos folders
 目录处于扫描中时数量仍可能变化；目录异常时不要把当前计数表述为最终值。这里统计的是
 Photos 索引范围，不等于文件系统中全部图片数量。
 
-## Conditional search
+## 条件搜索
 
 ```bash
 fnos-cli photos search IMG --limit 20
@@ -67,12 +67,12 @@ fnos-cli photos search 北京 --exclude-filter not_geo=1
 
 请求 `POST /p/api/v2/search/results`。请求字段：
 
-| Field | Required | Type | Meaning |
+| 字段 | 必填 | 类型 | 含义 |
 | --- | --- | --- | --- |
-| `keyword` | yes | string | 条件搜索关键词；CLI 拒绝空字符串 |
-| `limit` | yes | integer | 返回样本上限，CLI 接受 `1..200`，默认 `20` |
-| `filters` | yes | array | 正向 `{filterName, filterValue}` 条件 |
-| `antiFilters` | no | array | 排除 `{filterName, filterValue}` 条件 |
+| `keyword` | 是 | string | 条件搜索关键词；CLI 拒绝空字符串 |
+| `limit` | 是 | integer | 返回样本上限，CLI 接受 `1..200`，默认 `20` |
+| `filters` | 是 | array | 正向 `{filterName, filterValue}` 条件 |
+| `antiFilters` | 否 | array | 排除 `{filterName, filterValue}` 条件 |
 
 `--filter` 和 `--exclude-filter` 使用 `name=value`，可以重复。常见过滤名包括
 `file_type`、`is_collect`、`person`、`photo_tag` 和 `file_dir`。`file_type` 常见值包括
@@ -81,7 +81,7 @@ fnos-cli photos search 北京 --exclude-filter not_geo=1
 
 响应主要字段：
 
-| Field | Type | Meaning |
+| 字段 | 类型 | 含义 |
 | --- | --- | --- |
 | `list[]` | array | 当前返回的照片/视频样本 |
 | `timeline[]` | array | 按 `year`、`month`、`day` 聚合的 `itemCount` |
@@ -93,7 +93,7 @@ fnos-cli photos search 北京 --exclude-filter not_geo=1
 | `list[].photoUUID` | string | 照片流地址使用的 UUID |
 | `list[].additional.thumbnail.*Url` | string | 已转换为绝对地址的各尺寸预览字段 |
 
-## Photo detail
+## 照片详情
 
 ```bash
 fnos-cli photos info <photoId>
@@ -104,7 +104,7 @@ fnos-cli photos info <photoId>
 `model`、`fumber`、`exposureTime`、`isoSpeedRatings`、`focalLength`、`latitude`、
 `longitude`、`ownerId`、`ownerName`、`isCollect`、`isLive` 和标签。
 
-## Preview
+## 预览
 
 ```bash
 fnos-cli photos preview <photoId> --size m
@@ -118,7 +118,7 @@ fnos-cli photos preview <photoId> --size o --open
 `videoUrl` 和 `requiresAuthenticatedBrowserSession`。地址是绝对 URL，但浏览器通常仍需有
 已登录 fnOS 的 cookie；不要把它描述为免登录公开链接。
 
-## AI semantic search
+## AI 语义搜索
 
 先检查模型，再发起自然语言搜索：
 
@@ -128,7 +128,7 @@ fnos-cli photos request post /api/v1/magic-search/do \
   --json '{"keyword":"海边日落","antiFilters":[]}' --yes
 ```
 
-| Endpoint | Request | Response |
+| 端点 | 请求 | 响应 |
 | --- | --- | --- |
 | `POST /p/api/v1/magic-search/ready` | 无请求体 | `code == 0` 表示当前模型可用 |
 | `POST /p/api/v1/magic-search/do` | `keyword` 必填；`antiFilters` 可选 | `data.list[]` 为本次 AI 命中 |
@@ -141,7 +141,7 @@ fnos-cli photos request post /api/v1/magic-search/do \
 已知业务码 `4044` 表示当前模型不支持当前语言，需要先切换模型。其他非零业务码也应
 原样报告并停止，不要回退到普通文件名搜索后仍声称是 AI 结果。
 
-## Generic request
+## 通用请求
 
 ```bash
 fnos-cli photos request get /api/v1/server/sys_info

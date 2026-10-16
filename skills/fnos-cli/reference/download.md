@@ -114,188 +114,188 @@ fnos-cli download request appcgi.downloadcenter.<name> --json '<object>' --yes
 
 ### appcgi.downloadcenter.task.query
 
-#### Endpoint
+#### 端点
 `appcgi.downloadcenter.task.query`
 
-#### Purpose
+#### 用途
 查询任务列表、聚合统计和下载引擎错误信息。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli download ls
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.downloadcenter.task.query` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `engine_types` | body | no | array | 引擎类型过滤 | 可选 | `[1,2]` |
-| `ids` | body | no | array | 指定任务 ID | 可选 | `[42,43]` |
-| `state_filter` | body | no | number | 状态过滤掩码 | CLI 默认 `65535`（所有状态） | `65535` |
-| `type_filter` | body | no | number | 类型过滤 | 可选 | `1` |
-| `init_flag` | body | no | boolean | 初始化标志 | CLI 默认 `true` | `true` |
-| `uid` | body | no | number | 用户 ID | 可选 | `1000` |
+| `req` | 请求体 | 是 | string | 端点选择器 | 固定值 | `appcgi.downloadcenter.task.query` |
+| `reqid` | 请求体 | 是 | string | 请求关联 ID | 逐请求生成 | `69ba...` |
+| `engine_types` | 请求体 | 否 | array | 引擎类型过滤 | 可选 | `[1,2]` |
+| `ids` | 请求体 | 否 | array | 指定任务 ID | 可选 | `[42,43]` |
+| `state_filter` | 请求体 | 否 | number | 状态过滤掩码 | CLI 默认 `65535`（所有状态） | `65535` |
+| `type_filter` | 请求体 | 否 | number | 类型过滤 | 可选 | `1` |
+| `init_flag` | 请求体 | 否 | boolean | 初始化标志 | CLI 默认 `true` | `true` |
+| `uid` | 请求体 | 否 | number | 用户 ID | 可选 | `1000` |
 
-#### Response
+#### 响应
 主要响应字段（位于 `data.block.data` 解码后）：
 
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+| 字段 | 总是存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `tasks` | no | array | 任务列表 | 包含任务摘要信息 | `[...]` |
-| `stats` | no | object | 聚合统计 | 速度和大小统计 | `{...}` |
-| `errors` | no | array | 引擎错误 | 下载引擎报告的错误 | `[...]` |
+| `tasks` | 否 | array | 任务列表 | 包含任务摘要信息 | `[...]` |
+| `stats` | 否 | object | 聚合统计 | 速度和大小统计 | `{...}` |
+| `errors` | 否 | array | 引擎错误 | 下载引擎报告的错误 | `[...]` |
 
 常见任务字段：`id`、`type`、`name`、`state`、`total_size`、`size`、`dl_speed`、`up_speed`、`save_dir`、`uri`、`addition_time`、`error_code`、`error_message`
 
 ### appcgi.downloadcenter.task.search
 
-#### Endpoint
+#### 端点
 `appcgi.downloadcenter.task.search`
 
-#### Purpose
+#### 用途
 按任务名或文件名搜索下载任务。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli download ls <keyword>
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.downloadcenter.task.search` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `keyword` | body | yes | string | 搜索关键字 | 按任务名或文件名匹配 | `ubuntu` |
-| `uid` | body | no | number | 用户 ID | 可选 | `1000` |
+| `req` | 请求体 | 是 | string | 端点选择器 | 固定值 | `appcgi.downloadcenter.task.search` |
+| `reqid` | 请求体 | 是 | string | 请求关联 ID | 逐请求生成 | `69ba...` |
+| `keyword` | 请求体 | 是 | string | 搜索关键字 | 按任务名或文件名匹配 | `ubuntu` |
+| `uid` | 请求体 | 否 | number | 用户 ID | 可选 | `1000` |
 
 ### appcgi.downloadcenter.task.getInfo
 
-#### Endpoint
+#### 端点
 `appcgi.downloadcenter.task.getInfo`
 
-#### Purpose
+#### 用途
 获取单个下载任务的详细信息。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli download info <id>
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.downloadcenter.task.getInfo` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `id` | body | yes | number | 任务 ID | 正整数 | `42` |
-| `uid` | body | no | number | 用户 ID | 可选 | `1000` |
+| `req` | 请求体 | 是 | string | 端点选择器 | 固定值 | `appcgi.downloadcenter.task.getInfo` |
+| `reqid` | 请求体 | 是 | string | 请求关联 ID | 逐请求生成 | `69ba...` |
+| `id` | 请求体 | 是 | number | 任务 ID | 正整数 | `42` |
+| `uid` | 请求体 | 否 | number | 用户 ID | 可选 | `1000` |
 
-#### Response
+#### 响应
 主要响应字段（位于 `body` 中）：
 
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+| 字段 | 总是存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `name` | no | string | 任务名称 | | `ubuntu-22.04.iso` |
-| `total_size` | no | number | 总大小（bytes） | | `4194304` |
-| `save_path` | no | string | 保存路径 | | `/vol1/downloads` |
-| `dl_speed` | no | number | 下载速度 | | `1048576` |
-| `up_speed` | no | number | 上传速度 | | `0` |
-| `eta` | no | number | 预计剩余时间 | | `120` |
-| `seeds` | no | number | 种子数 | | `5` |
-| `peers` | no | number | 对等节点数 | | `12` |
-| `share_ratio` | no | number | 分享比 | | `0.5` |
-| `addition_date` | no | number | 添加时间 | | `1710000000` |
-| `completion_date` | no | number | 完成时间 | | `1710100000` |
+| `name` | 否 | string | 任务名称 | | `ubuntu-22.04.iso` |
+| `total_size` | 否 | number | 总大小（bytes） | | `4194304` |
+| `save_path` | 否 | string | 保存路径 | | `/vol1/downloads` |
+| `dl_speed` | 否 | number | 下载速度 | | `1048576` |
+| `up_speed` | 否 | number | 上传速度 | | `0` |
+| `eta` | 否 | number | 预计剩余时间 | | `120` |
+| `seeds` | 否 | number | 种子数 | | `5` |
+| `peers` | 否 | number | 对等节点数 | | `12` |
+| `share_ratio` | 否 | number | 分享比 | | `0.5` |
+| `addition_date` | 否 | number | 添加时间 | | `1710000000` |
+| `completion_date` | 否 | number | 完成时间 | | `1710100000` |
 
 ### appcgi.downloadcenter.task.getFiles
 
-#### Endpoint
+#### 端点
 `appcgi.downloadcenter.task.getFiles`
 
-#### Purpose
+#### 用途
 获取下载任务的文件列表，对 BT 类任务尤其有用。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli download files <id>
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.downloadcenter.task.getFiles` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `id` | body | yes | number | 任务 ID | 正整数 | `42` |
-| `mode` | body | no | number | 获取模式 | `1` 表示立即获取 | `1` |
-| `uid` | body | no | number | 用户 ID | 可选 | `1000` |
+| `req` | 请求体 | 是 | string | 端点选择器 | 固定值 | `appcgi.downloadcenter.task.getFiles` |
+| `reqid` | 请求体 | 是 | string | 请求关联 ID | 逐请求生成 | `69ba...` |
+| `id` | 请求体 | 是 | number | 任务 ID | 正整数 | `42` |
+| `mode` | 请求体 | 否 | number | 获取模式 | `1` 表示立即获取 | `1` |
+| `uid` | 请求体 | 否 | number | 用户 ID | 可选 | `1000` |
 
-#### Response
+#### 响应
 主要响应字段（位于 `body[]` 中）：
 
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+| 字段 | 总是存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `index` | no | number | 文件序号 | | `0` |
-| `name` | no | string | 文件名 | | `readme.txt` |
-| `size` | no | number | 文件大小 | | `1024` |
-| `progress` | no | number | 下载进度 | | `0.75` |
-| `priority` | no | number | 优先级 | `0` 不下载，`1` 正常，`7` 最高 | `1` |
+| `index` | 否 | number | 文件序号 | | `0` |
+| `name` | 否 | string | 文件名 | | `readme.txt` |
+| `size` | 否 | number | 文件大小 | | `1024` |
+| `progress` | 否 | number | 下载进度 | | `0.75` |
+| `priority` | 否 | number | 优先级 | `0` 不下载，`1` 正常，`7` 最高 | `1` |
 
 ### appcgi.downloadcenter.task.addUris
 
-#### Endpoint
+#### 端点
 `appcgi.downloadcenter.task.addUris`
 
-#### Purpose
+#### 用途
 从 URL 或磁力链接创建下载任务。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli download add-uri <uri> <saveDir> --yes
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.downloadcenter.task.addUris` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `uris` | body | yes | string[] | URI 列表 | 支持 http/https/ftp/sftp/magnet | `["magnet:?xt=..."]` |
-| `save_dir` | body | yes | string | 保存目录 | 必须为 `/vol{v}/...` 格式 | `/vol1/downloads` |
-| `select_files` | body | no | array | 选择文件 | BT 类输入时有意义 | `[0,1,2]` |
-| `uris_type` | body | no | number | URI 类型 | `0` 默认，`1` qBittorrent | `0` |
+| `req` | 请求体 | 是 | string | 端点选择器 | 固定值 | `appcgi.downloadcenter.task.addUris` |
+| `reqid` | 请求体 | 是 | string | 请求关联 ID | 逐请求生成 | `69ba...` |
+| `uris` | 请求体 | 是 | string[] | URI 列表 | 支持 http/https/ftp/sftp/magnet | `["magnet:?xt=..."]` |
+| `save_dir` | 请求体 | 是 | string | 保存目录 | 必须为 `/vol{v}/...` 格式 | `/vol1/downloads` |
+| `select_files` | 请求体 | 否 | array | 选择文件 | BT 类输入时有意义 | `[0,1,2]` |
+| `uris_type` | 请求体 | 否 | number | URI 类型 | `0` 默认，`1` qBittorrent | `0` |
 
-#### Response
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+#### 响应
+| 字段 | 总是存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `ids` | no | number[] | 创建的任务 ID | | `[42]` |
-| `errs` | no | array | 逐项错误 | 请求成功但部分项失败时出现 | `[{"uri":"...","err":"..."}]` |
+| `ids` | 否 | number[] | 创建的任务 ID | | `[42]` |
+| `errs` | 否 | array | 逐项错误 | 请求成功但部分项失败时出现 | `[{"uri":"...","err":"..."}]` |
 
 ### appcgi.downloadcenter.task.addPaths
 
-#### Endpoint
+#### 端点
 `appcgi.downloadcenter.task.addPaths`
 
-#### Purpose
+#### 用途
 从 NAS 上已有的种子文件创建下载任务。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli download add-path <path> <saveDir> --yes
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.downloadcenter.task.addPaths` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `paths` | body | yes | string[] | 种子文件路径列表 | 必须为 `/vol{v}/...` 格式 | `["/vol1/torrents/demo.torrent"]` |
-| `save_dir` | body | yes | string | 保存目录 | 必须为 `/vol{v}/...` 格式 | `/vol1/downloads` |
-| `select_files` | body | no | array | 选择文件 | 可选 | `[0,1]` |
+| `req` | 请求体 | 是 | string | 端点选择器 | 固定值 | `appcgi.downloadcenter.task.addPaths` |
+| `reqid` | 请求体 | 是 | string | 请求关联 ID | 逐请求生成 | `69ba...` |
+| `paths` | 请求体 | 是 | string[] | 种子文件路径列表 | 必须为 `/vol{v}/...` 格式 | `["/vol1/torrents/demo.torrent"]` |
+| `save_dir` | 请求体 | 是 | string | 保存目录 | 必须为 `/vol{v}/...` 格式 | `/vol1/downloads` |
+| `select_files` | 请求体 | 否 | array | 选择文件 | 可选 | `[0,1]` |
 
-#### Response
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+#### 响应
+| 字段 | 总是存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `ids` | no | number[] | 创建的任务 ID | | `[43]` |
-| `errs` | no | array | 逐项错误 | 请求成功但部分项失败时出现 | `[...]` |
+| `ids` | 否 | number[] | 创建的任务 ID | | `[43]` |
+| `errs` | 否 | array | 逐项错误 | 请求成功但部分项失败时出现 | `[...]` |
 
 ### 控制类端点
 
@@ -303,7 +303,7 @@ fnos-cli download add-path <path> <saveDir> --yes
 
 这四个端点共享相同的请求结构。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli download pause <id...> --yes
 fnos-cli download resume <id...> --yes
@@ -311,45 +311,45 @@ fnos-cli download retry <id...> --yes
 fnos-cli download rm <id...> --yes
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | 对应具体操作 | `appcgi.downloadcenter.task.pause` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `ids` | body | yes | number[] | 任务 ID 列表 | 支持批量操作 | `[42, 43]` |
-| `uid` | body | no | number | 用户 ID | 可选 | `1000` |
-| `delete_files` | body | no | boolean | 是否同时删除文件 | 仅 `delete` 端点可用；CLI 默认不删除文件 | `false` |
+| `req` | 请求体 | 是 | string | 端点选择器 | 对应具体操作 | `appcgi.downloadcenter.task.pause` |
+| `reqid` | 请求体 | 是 | string | 请求关联 ID | 逐请求生成 | `69ba...` |
+| `ids` | 请求体 | 是 | number[] | 任务 ID 列表 | 支持批量操作 | `[42, 43]` |
+| `uid` | 请求体 | 否 | number | 用户 ID | 可选 | `1000` |
+| `delete_files` | 请求体 | 否 | boolean | 是否同时删除文件 | 仅 `delete` 端点可用；CLI 默认不删除文件 | `false` |
 
-#### Response
+#### 响应
 成功时通常返回 `"ok"`。
 
 ### appcgi.downloadcenter.stat.all
 
-#### Endpoint
+#### 端点
 `appcgi.downloadcenter.stat.all`
 
-#### Purpose
+#### 用途
 获取下载中心的汇总统计信息。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli download stat
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.downloadcenter.stat.all` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `uid` | body | no | number | 用户 ID | 可选 | `1000` |
+| `req` | 请求体 | 是 | string | 端点选择器 | 固定值 | `appcgi.downloadcenter.stat.all` |
+| `reqid` | 请求体 | 是 | string | 请求关联 ID | 逐请求生成 | `69ba...` |
+| `uid` | 请求体 | 否 | number | 用户 ID | 可选 | `1000` |
 
-#### Response
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+#### 响应
+| 字段 | 总是存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `dl_speed` | no | number | 总下载速度 | | `1048576` |
-| `dl_total_size` | no | number | 总下载量 | | `10737418240` |
-| `up_speed` | no | number | 总上传速度 | | `524288` |
-| `up_total_size` | no | number | 总上传量 | | `5368709120` |
+| `dl_speed` | 否 | number | 总下载速度 | | `1048576` |
+| `dl_total_size` | 否 | number | 总下载量 | | `10737418240` |
+| `up_speed` | 否 | number | 总上传速度 | | `524288` |
+| `up_total_size` | 否 | number | 总上传量 | | `5368709120` |
 
 ## 注意事项
 - 文件上传（`task.addUploadFile`）需要上传内容和大块传输支持，不应当作普通 `download request --json` 调用。

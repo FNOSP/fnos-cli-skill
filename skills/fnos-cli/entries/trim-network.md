@@ -1,20 +1,19 @@
 ---
 name: trim-network
-description: Manage network service switches, including enabling or disabling SSH, and check write confirmation requirements.
+description: 管理网络服务开关，包括开启或关闭 SSH，并确认写操作的授权要求。
 ---
 
-# Networking
+# 网络
 
-Read `../reference/network.md` for fields and `trim-shared.md` for connections
-and sessions.
+字段约束阅读 `../reference/network.md`；连接与会话规则阅读 `trim-shared.md`。
 
-## Rules
+## 使用规则
 
-- Enabling SSH is security-sensitive and requires explicit user authorization.
-- After confirming authorization, Agent commands pass `--yes` explicitly.
-- Exactly one of `--enable` and `--disable` is required.
+- 开启 SSH 是安全敏感操作，必须得到用户明确授权。
+- 确认授权后，Agent 命令明确传入 `--yes`。
+- `--enable` 和 `--disable` 必须且只能选择一个。
 
-## Commands
+## 命令
 
 ```bash
 fnos-cli network ssh switch --enable --yes

@@ -1,57 +1,57 @@
-# App Center reference
+# 应用中心参考
 
-## Command overview
+## 命令概览
 
-| Command | Purpose | Output |
+| 命令 | 用途 | 输出 |
 | --- | --- | --- |
-| `app list` | List installed App Center apps | JSON |
-| `app status <appName>` | Show one installed app record | JSON |
-| `app base-data` | Read App Center sidebar/source/tag base data | JSON |
-| `app store list` | List cloud App Center packages | JSON |
-| `app store search <keyword>` | Search cloud App Center packages | JSON |
-| `app store detail <appName>` | Show cloud package detail | JSON |
-| `app store latest-release` | List latest release packages | JSON |
-| `app check-update` | Check App Center update availability | JSON |
-| `app check-update --post` | Trigger an App Center update check | Success message |
-| `app common volume` | Read remembered App Center volume | JSON |
-| `app common volume --set <volumeId>` | Set remembered App Center volume | Success message |
-| `app config sys/list/detail/auth-paths/wizard` | Read App Center system and app config | JSON |
-| `app config set-sys --fields <json>` | Update App Center system config fields | Success message |
-| `app config set <appName> --fields <json>` | Update one app config payload | Success message |
-| `app config auto-update <appName>` | Enable or disable app auto update | Success message |
-| `app config proxy-access <appName>` | Allow or deny proxy access | Success message |
-| `app config post-wizard <appName> --fields <json>` | Submit app wizard custom parameters | Success message |
-| `app service list` | List service metadata | JSON |
-| `app entry list` | List available application entries | JSON |
-| `app desktop list` | List the current user's desktop layout and entries | JSON |
-| `app guide check-installed <appName...>` | Check whether guide-required apps are installed | JSON |
-| `app guide batch-download-install <volumeId> <appName...>` | Start guide batch download/install tasks | Success message |
-| `app operation settings` | Read operation settings | JSON |
-| `app openapi app-detail <appName>` | Read OpenAPI app detail for authorization flows | JSON |
-| `app openapi allow-user-auth-paths <appName>` | Read whether users may authorize paths to an app | JSON |
-| `app openapi add-user-auth-path <appName> <path>` | Add current-user authorization path for an app | Success message |
-| `app openapi add-user-auth-inherit-file <appName> <path>` | Add inherited-file authorization for an app | Success message |
-| `app sac app-store-list` | Read SAC App Store entry list | JSON |
-| `app task-status <taskId>` | Query an App Center common task | JSON |
-| `app task-cancel <taskId>` | Cancel an App Center common task | Success message |
-| `app download cancel <downloadTaskId>` | Cancel an App Center download task | Success message |
-| `app install-cancel <taskId>` | Cancel an App Center install task | Success message |
-| `app update-cancel <taskId>` | Cancel an App Center update task | Success message |
-| `app install <appName>` | Download and install an App Center package by name and version | Success message |
-| `app install <appName> --dry-run` | Download and inspect an App Center package without starting install | Success message |
-| `app install-fpk <localFile.fpk>` | Upload and install a local fpk package | Success message |
-| `app install-fpk --remote-path /vol.../*.fpk` | Install an fpk package already stored on the NAS | Success message |
-| `app install-fpk <localFile.fpk> --dry-run` / `--remote-path ... --dry-run` | Inspect an fpk package without starting install | JSON plan |
-| `app update <appName>` | Download and update an installed app to a target version | Success message |
-| `app update <appName> --dry-run` | Download and inspect an App Center update without starting update | Success message |
-| `app start <appName>` | Start an installed app | Success message |
-| `app stop <appName>` | Stop an installed app | Success message |
-| `app restart <appName>` | Restart an installed app | Success message |
-| `app uninstall <appName>` | Uninstall an installed app | Success message |
+| `app list` | 列出应用中心已安装应用 | JSON |
+| `app status <appName>` | 显示一个已安装应用记录 | JSON |
+| `app base-data` | 读取应用中心侧栏、来源和标签基础数据 | JSON |
+| `app store list` | 列出云端应用中心软件包 | JSON |
+| `app store search <keyword>` | 搜索云端应用中心软件包 | JSON |
+| `app store detail <appName>` | 显示云端软件包详情 | JSON |
+| `app store latest-release` | 列出最新发布的软件包 | JSON |
+| `app check-update` | 检查应用中心可用更新 | JSON |
+| `app check-update --post` | 触发应用中心更新检查 | 成功消息 |
+| `app common volume` | 读取应用中心记住的卷 | JSON |
+| `app common volume --set <volumeId>` | 设置应用中心记住的卷 | 成功消息 |
+| `app config sys/list/detail/auth-paths/wizard` | 读取应用中心系统和应用配置 | JSON |
+| `app config set-sys --fields <json>` | 更新应用中心系统配置字段 | 成功消息 |
+| `app config set <appName> --fields <json>` | 更新指定应用配置载荷 | 成功消息 |
+| `app config auto-update <appName>` | 启用或禁用应用自动更新 | 成功消息 |
+| `app config proxy-access <appName>` | 允许或拒绝代理访问 | 成功消息 |
+| `app config post-wizard <appName> --fields <json>` | 提交应用向导自定义参数 | 成功消息 |
+| `app service list` | 列出服务元数据 | JSON |
+| `app entry list` | 列出可用应用入口 | JSON |
+| `app desktop list` | 列出当前用户的桌面布局和入口 | JSON |
+| `app guide check-installed <appName...>` | 检查引导所需应用是否已安装 | JSON |
+| `app guide batch-download-install <volumeId> <appName...>` | 启动引导批量下载/安装任务 | 成功消息 |
+| `app operation settings` | 读取操作设置 | JSON |
+| `app openapi app-detail <appName>` | 读取授权流程所用的 OpenAPI 应用详情 | JSON |
+| `app openapi allow-user-auth-paths <appName>` | 读取是否允许用户向应用授权路径 | JSON |
+| `app openapi add-user-auth-path <appName> <path>` | 为应用新增当前用户授权路径 | 成功消息 |
+| `app openapi add-user-auth-inherit-file <appName> <path>` | 为应用新增继承文件授权 | 成功消息 |
+| `app sac app-store-list` | 读取 SAC 应用商店入口列表 | JSON |
+| `app task-status <taskId>` | 查询应用中心通用任务 | JSON |
+| `app task-cancel <taskId>` | 取消应用中心通用任务 | 成功消息 |
+| `app download cancel <downloadTaskId>` | 取消应用中心下载任务 | 成功消息 |
+| `app install-cancel <taskId>` | 取消应用中心安装任务 | 成功消息 |
+| `app update-cancel <taskId>` | 取消应用中心更新任务 | 成功消息 |
+| `app install <appName>` | 按名称和版本下载并安装应用中心软件包 | 成功消息 |
+| `app install <appName> --dry-run` | 下载并检查应用中心软件包，不启动安装 | 成功消息 |
+| `app install-fpk <localFile.fpk>` | 上传并安装本地 FPK 软件包 | 成功消息 |
+| `app install-fpk --remote-path /vol.../*.fpk` | 安装已保存在 NAS 上的 FPK 软件包 | 成功消息 |
+| `app install-fpk <localFile.fpk> --dry-run` / `--remote-path ... --dry-run` | 检查 FPK 软件包，不启动安装 | JSON 计划 |
+| `app update <appName>` | 下载并将已安装应用更新到目标版本 | 成功消息 |
+| `app update <appName> --dry-run` | 下载并检查应用中心更新，不启动更新 | 成功消息 |
+| `app start <appName>` | 启动已安装应用 | 成功消息 |
+| `app stop <appName>` | 停止已安装应用 | 成功消息 |
+| `app restart <appName>` | 重启已安装应用 | 成功消息 |
+| `app uninstall <appName>` | 卸载已安装应用 | 成功消息 |
 
-## Endpoints
+## 端点
 
-| Command | Method | Endpoint |
+| 命令 | 方法 | 端点 |
 | --- | --- | --- |
 | `app list` / `app status` | GET | `/app-center/v1/app/installed` |
 | `app base-data` | GET | `/app-center/v2/config/base-data` |
@@ -82,153 +82,153 @@
 | `app task-status` | POST | `/app-center/v1/common/task-status` |
 | `app task-cancel` | POST | `/app-center/v1/common/task-cancel` |
 | `app download cancel` | POST | `/app-center/v1/download/cancel` |
-| `app install` info | GET | `/app-center/v1/install/info` |
-| `app install` start | POST | `/app-center/v1/install/task` |
+| `app install` 信息 | GET | `/app-center/v1/install/info` |
+| `app install` 启动 | POST | `/app-center/v1/install/task` |
 | `app install-cancel` | POST | `/app-center/v1/install/cancel` |
-| `app install-fpk` upload | POST | `/app-center/v1/download/upload` |
-| `app install-fpk --remote-path` package task | POST | `/app-center/v1/download/task` with `packageSourceType=file` and `path` |
-| `app install-fpk` upload status | GET | `/app-center/v1/download/status` |
-| `app update` info | GET | `/app-center/v1/update/info` |
-| `app update` start | POST | `/app-center/v1/update/task` |
+| `app install-fpk` 上传 | POST | `/app-center/v1/download/upload` |
+| `app install-fpk --remote-path` 软件包任务 | POST | `/app-center/v1/download/task`，使用 `packageSourceType=file` 和 `path` |
+| `app install-fpk` 上传状态 | GET | `/app-center/v1/download/status` |
+| `app update` 信息 | GET | `/app-center/v1/update/info` |
+| `app update` 启动 | POST | `/app-center/v1/update/task` |
 | `app update-cancel` | POST | `/app-center/v1/update/cancel` |
-| `app start` check/start | POST | `/app-center/v1/start/check`, `/app-center/v1/start/start` |
-| `app stop` check/start | POST | `/app-center/v1/stop/check`, `/app-center/v1/stop/start` |
+| `app start` 检查/启动 | POST | `/app-center/v1/start/check`, `/app-center/v1/start/start` |
+| `app stop` 检查/启动 | POST | `/app-center/v1/stop/check`, `/app-center/v1/stop/start` |
 | `app restart` | POST | `/app-center/v1/restart` |
-| `app uninstall` info/start | GET/POST | `/app-center/v1/uninstall/info`, `/app-center/v1/uninstall/start` |
+| `app uninstall` 信息/启动 | GET/POST | `/app-center/v1/uninstall/info`, `/app-center/v1/uninstall/start` |
 
-## Safety behavior
+## 安全行为
 
-All write commands require `--yes`.
+所有写命令都要求 `--yes`。
 
-`app store detail` accepts optional `--source-id` and `--version` when the store result includes a source identifier or a specific version is needed.
+当商店结果包含来源标识或需要指定版本时，`app store detail` 接受可选 `--source-id` 和 `--version`。
 
-`app task-cancel` requires `--yes`. The common task status/cancel endpoints use `taskID` in the request body.
+`app task-cancel` 要求 `--yes`。通用任务状态/取消端点在请求体中使用 `taskID`。
 
-`app check-update --post`, `app common volume --set`, `app download cancel`, `app install-cancel`, `app update-cancel`, `app restart`, config writes, and guide batch download/install are write operations and require `--yes`.
+`app check-update --post`、`app common volume --set`、`app download cancel`、`app install-cancel`、`app update-cancel`、`app restart`、配置写入和引导批量下载/安装均为写操作，要求 `--yes`。
 
-OpenAPI user authorization write commands require `--yes` and require a concrete `/vol...` path. These commands model app/user authorization flows rather than global App Center settings.
+OpenAPI 用户授权写命令要求 `--yes` 和具体 `/vol...` 路径。这些命令对应应用/用户授权流程，不是应用中心全局设置。
 
-For config write commands, `--fields` must be a JSON object. `app config set` adds `appName` to that object before sending it. `app config post-wizard` also adds `appName`; include `customParameters` in `--fields`.
+配置写命令的 `--fields` 必须是 JSON 对象。`app config set` 在发送前向对象中加入 `appName`；`app config post-wizard` 也加入 `appName`，其 `--fields` 中应包含 `customParameters`。
 
-`app config set-sys` validates common App Center settings before sending:
+`app config set-sys` 在发送前校验常用应用中心设置：
 
-- `downloadAndInstallVolumeID` must be `-1` or a positive integer.
-- `globalAutoUpdate.enabled` must be boolean when present.
-- When global auto update is enabled, or either update time is provided, `updateStartTime` and `updateEndTime` are both required, must use `HH:MM`, and the effective window must be at least 60 minutes.
-- `cloudSecuritySync.enabled` must be boolean when present.
-- When cloud security sync is enabled, or `strategy` is provided, `strategy` must be `strict`, `balanced`, or `lenient`.
-- `autoRunNewApp` must be boolean when present.
-- `autoCreateDesktopIcon` is not sent by the current App Center UI payload. CLI refuses it by default and only sends it when `--allow-desktop-icon-field` is passed; when allowed, it must be boolean.
+- `downloadAndInstallVolumeID` 必须为 `-1` 或正整数。
+- 提供 `globalAutoUpdate.enabled` 时必须为布尔值。
+- 启用全局自动更新或提供任一更新时间时，`updateStartTime` 和 `updateEndTime` 必须同时提供，格式为 `HH:MM`，有效时间窗口至少 60 分钟。
+- 提供 `cloudSecuritySync.enabled` 时必须为布尔值。
+- 启用云端安全同步或提供 `strategy` 时，`strategy` 必须为 `strict`、`balanced` 或 `lenient`。
+- 提供 `autoRunNewApp` 时必须为布尔值。
+- 当前应用中心界面载荷不发送 `autoCreateDesktopIcon`。CLI 默认拒绝该字段，只有传入 `--allow-desktop-icon-field` 才会发送；允许发送时该值必须为布尔值。
 
-`app install` and `app update` default to `--package-type cloud`. They create and poll an App Center cloud download task before calling install/update info and task endpoints, then wait for the returned install/update task to finish. With `--dry-run`, they still download/parse the cloud package and apply safety guards, but they do not call the install/update task endpoint. `app install-fpk` derives `packageType` from the uploaded or remote package status and commonly uses `file`.
+`app install` 和 `app update` 默认使用 `--package-type cloud`。两者先创建并轮询应用中心云端下载任务，再调用安装/更新信息及任务端点，等待返回的安装/更新任务完成。使用 `--dry-run` 仍会下载/解析云软件包并执行安全检查，但不调用安装/更新任务端点。`app install-fpk` 从已上传或远程软件包的状态推导 `packageType`，通常为 `file`。
 
-`app install`, `app update`, and `app install-fpk` accept explicit wizard inputs:
+`app install`、`app update` 和 `app install-fpk` 接受显式向导输入：
 
-- `--custom-parameters '<jsonArray>'` sends App Center `customParameters`.
-- `--api-scope '<jsonObject>'` sends `systemParameters.apiScope`.
-- `--accept-license` explicitly accepts package license confirmation outside App Center UI.
-- `--cancel-on-failure` attempts the matching install/update cancel endpoint if the install/update task reaches a failed status; the original failure context remains in stderr.
-- If App Center reports that custom wizard parameters are required and `--custom-parameters` is not provided, CLI refuses before starting the install/update task.
+- `--custom-parameters '<jsonArray>'` 发送应用中心 `customParameters`。
+- `--api-scope '<jsonObject>'` 发送 `systemParameters.apiScope`。
+- `--accept-license` 在应用中心界面之外显式接受软件包许可确认。
+- 安装/更新任务进入失败状态时，`--cancel-on-failure` 尝试对应安装/更新取消端点；原始失败上下文仍保留在 stderr 中。
+- 应用中心要求自定义向导参数而未提供 `--custom-parameters` 时，CLI 在启动安装/更新任务前拒绝执行。
 
-For `app install`, `app update`, and `app install-fpk`, `--volume-id` is recommended. If omitted, CLI reads App Center sysconfig and uses `downloadAndInstallVolumeID`, with `volumeID` as compatibility fallback. The value must be positive; if no usable default exists, CLI rejects and asks for `--volume-id`.
+对 `app install`、`app update` 和 `app install-fpk`，建议提供 `--volume-id`。省略时 CLI 读取应用中心系统配置，使用 `downloadAndInstallVolumeID`，并以 `volumeID` 作为兼容后备。该值必须为正数；没有可用默认卷时拒绝执行并要求提供 `--volume-id`。
 
-Use `app install-fpk <localFile.fpk> --volume-id <volumeId> --dry-run --yes` before a risky manual install. Dry-run still uploads a local FPK so App Center can parse it, then reads install info and applies CLI safety guards, but it does not call `/app-center/v1/install/task`.
+风险较高的手动安装前，先运行 `app install-fpk <localFile.fpk> --volume-id <volumeId> --dry-run --yes`。预演仍上传本地 FPK 供应用中心解析，随后读取安装信息并执行 CLI 安全检查，但不调用 `/app-center/v1/install/task`。
 
-Use `app install-fpk --remote-path /vol.../*.fpk --dry-run --yes` for an FPK that is already on the NAS. The path must be a concrete `/vol...` path, must end with `.fpk`, and the remote file size must be no larger than 10GB. CLI checks the remote file property before creating the App Center remote package task.
+NAS 上已有的 FPK 使用 `app install-fpk --remote-path /vol.../*.fpk --dry-run --yes`。路径必须是具体 `/vol...` 路径、以 `.fpk` 结尾，远程文件不得大于 10GB。CLI 在创建应用中心远程软件包任务前检查远程文件属性。
 
-If an install or update task fails, stderr includes the task id plus `appName`, `version`, `packageType`, install/data volume ids, immediate-start flag, status/progress, and any backend `message` or `outputText`. With `--cancel-on-failure`, stderr also says whether the cancel request was attempted or failed.
+安装或更新任务失败时，stderr 包含任务 ID、`appName`、`version`、`packageType`、安装/数据卷 ID、立即启动标记、状态/进度，以及后端 `message` 或 `outputText`。使用 `--cancel-on-failure` 时，stderr 还说明是否尝试取消以及取消是否失败。
 
-Known storage errors are diagnosed in addition to the raw backend response. For manual FPK upload, `20001` means the selected storage volume is unavailable; choose a mounted, healthy volume id before retrying.
+已知存储错误在原始后端响应之外提供诊断。手动上传 FPK 时，`20001` 表示所选存储卷不可用；重试前选择已挂载且健康的卷 ID。
 
-If start or stop returns `10500`, App Center reports that the status operation is not supported for the current app state/control data. Inspect `app status` or use App Center UI.
+启动或停止返回 `10500` 时，表示应用中心不支持对当前应用状态/控制数据执行该状态操作。检查 `app status` 或使用应用中心界面。
 
-For `app install`, pass `--source-id` when the cloud app source identifier is known. `app update` resolves `sourceID` from the installed app list.
+运行 `app install` 时，若已知云应用来源标识，则传入 `--source-id`。`app update` 从已安装应用列表解析 `sourceID`。
 
-The CLI refuses cases that require App Center UI decisions:
+CLI 拒绝以下需要应用中心界面决策的情况：
 
-- license confirmation without explicit `--accept-license`
-- custom install/update wizard parameters without explicit `--custom-parameters`
-- custom uninstall wizard parameters
-- unsupported install types other than `volume` or `root`
-- Docker unavailable or uninitialized for install/update
-- OS version mismatch
-- dependency app install/update/start changes
-- running dependent apps for stop/uninstall
+- 需要许可确认但未显式提供 `--accept-license`
+- 需要自定义安装/更新向导参数但未显式提供 `--custom-parameters`
+- 需要自定义卸载向导参数
+- 安装类型不是受支持的 `volume` 或 `root`
+- 安装/更新所需的 Docker 不可用或未初始化
+- 操作系统版本不匹配
+- 需要安装、更新或启动依赖应用
+- 停止/卸载会影响运行中的依赖应用
 
-Root install packages are supported by sending install volume as `0` while keeping data volume as the selected volume, matching App Center behavior.
+支持根目录安装的软件包：安装卷发送 `0`，数据卷保持所选卷，与应用中心行为一致。
 
-Uninstall waits until the app no longer appears in the installed app list. This avoids starting a follow-up install while the backend is still removing the previous installation.
+卸载会等待应用从已安装列表中消失，避免后端仍在移除旧安装时启动后续安装。
 
-## Failure handling matrix
+## 失败处理矩阵
 
-| Condition | CLI behavior | What to do |
+| 条件 | CLI 行为 | 处理方式 |
 | --- | --- | --- |
-| License confirmation is required and `--accept-license` is missing | Rejects before install/update task | Pass `--accept-license` only after reviewing the license, or use App Center UI |
-| Custom install/update wizard parameters are required and `--custom-parameters` is missing | Rejects before install/update task | Pass explicit wizard JSON or use App Center UI |
-| Custom uninstall wizard parameters are required | Rejects before uninstall task | Use App Center UI |
-| Unsupported install type | Rejects before install/update task | Use App Center UI |
-| Docker is unavailable or uninitialized | Rejects before install/update task | Fix Docker or use App Center UI |
-| OS version is incompatible | Rejects before install/update/start task | Choose a compatible app or OS version |
-| Dependency app changes are required | Rejects before install/update/start task | Use App Center UI to review dependency operations |
-| Running dependent apps would be affected | Rejects stop/uninstall, and install/update where applicable | Stop/review dependent apps in App Center UI |
-| Cloud download fails | Reports cloud download task id plus app/version/source/volume context | Check sourceID, version, network, and App Center availability |
-| Install/update task fails with `--cancel-on-failure` | Reports task failure context and attempts the matching cancel endpoint | Inspect stderr for cancel result, then verify task state in App Center if needed |
-| Cloud install/update dry-run passes | Prints a success message and does not start install/update task | Review app/version/package/volume before running without `--dry-run` |
-| FPK upload fails | Reports upload task id and upload context | Check package validity and target volume |
-| FPK upload returns `20001` | Reports storage-unavailable diagnostic plus raw response | Check that the selected volume exists, is mounted, and is healthy |
-| FPK dry-run passes | Outputs JSON plan and does not start install task | Review app/version/package/volume before running without `--dry-run` |
-| Remote FPK path or size is invalid | Rejects before App Center download task | Use a concrete `/vol.../*.fpk` path and a file no larger than 10GB |
-| Default install volume is missing | Rejects before download/install task | Pass `--volume-id` or configure App Center default download/install volume |
-| `set-sys` field validation fails | Rejects before network request | Fix the field type, enum, volume id, or update time window |
-| Install/update task fails | Reports task id plus app/version/package/volume/status/progress/backend message | Use the context to identify package, version, volume, or backend script failure |
-| Start/stop returns `10500` | Reports status-operation diagnostic plus raw response | Inspect `app status` or use App Center UI |
-| Uninstall does not disappear from installed list | Times out with the app name | Inspect App Center UI or retry after backend task settles |
+| 需要许可确认但缺少 `--accept-license` | 在安装/更新任务前拒绝 | 审阅许可后才传入 `--accept-license`，或使用应用中心界面 |
+| 需要自定义安装/更新向导参数但缺少 `--custom-parameters` | 在安装/更新任务前拒绝 | 显式提供向导 JSON 或使用应用中心界面 |
+| 需要自定义卸载向导参数 | 在卸载任务前拒绝 | 使用应用中心界面 |
+| 安装类型不受支持 | 在安装/更新任务前拒绝 | 使用应用中心界面 |
+| Docker 不可用或未初始化 | 在安装/更新任务前拒绝 | 修复 Docker 或使用应用中心界面 |
+| 操作系统版本不兼容 | 在安装/更新/启动任务前拒绝 | 选择兼容的应用或操作系统版本 |
+| 需要变更依赖应用 | 在安装/更新/启动任务前拒绝 | 在应用中心界面审阅依赖操作 |
+| 会影响运行中的依赖应用 | 拒绝停止/卸载，并在适用时拒绝安装/更新 | 在应用中心界面停止/检查依赖应用 |
+| 云端下载失败 | 报告云端下载任务 ID 及应用/版本/来源/卷上下文 | 检查 sourceID、版本、网络和应用中心可用性 |
+| 使用 `--cancel-on-failure` 时安装/更新任务失败 | 报告任务失败上下文并尝试对应取消端点 | 查看 stderr 中的取消结果，必要时在应用中心确认任务状态 |
+| 云端安装/更新预演通过 | 显示成功消息，不启动安装/更新任务 | 检查应用/版本/软件包/卷后再去掉 `--dry-run` 执行 |
+| FPK 上传失败 | 报告上传任务 ID 和上传上下文 | 检查软件包有效性和目标卷 |
+| FPK 上传返回 `20001` | 报告存储不可用诊断及原始响应 | 检查所选卷是否存在、已挂载且健康 |
+| FPK 预演通过 | 输出 JSON 计划，不启动安装任务 | 检查应用/版本/软件包/卷后再去掉 `--dry-run` 执行 |
+| 远程 FPK 路径或大小无效 | 在应用中心下载任务前拒绝 | 使用具体 `/vol.../*.fpk` 路径和不大于 10GB 的文件 |
+| 缺少默认安装卷 | 在下载/安装任务前拒绝 | 传入 `--volume-id` 或配置应用中心默认下载/安装卷 |
+| `set-sys` 字段校验失败 | 在网络请求前拒绝 | 修正字段类型、枚举、卷 ID 或更新时间窗口 |
+| 安装/更新任务失败 | 报告任务 ID 及应用/版本/软件包/卷/状态/进度/后端消息 | 根据上下文定位软件包、版本、卷或后端脚本故障 |
+| 启动/停止返回 `10500` | 报告状态操作诊断及原始响应 | 检查 `app status` 或使用应用中心界面 |
+| 卸载后应用未从已安装列表消失 | 超时并报告应用名 | 检查应用中心界面或等待后端任务结束后重试 |
 
-## Examples
+## 示例
 
 ```bash
-fnos-cli app list
-fnos-cli app status trim.alist
-fnos-cli app store list
-fnos-cli app store search alist
-fnos-cli app store detail trim.alist --source-id 265 --version 3.0.13
-fnos-cli app store latest-release
-fnos-cli app check-update
-fnos-cli app check-update --post --yes
-fnos-cli app common volume
-fnos-cli app common volume --set 2 --yes
-fnos-cli app config sys
-fnos-cli app config detail trim.alist
-fnos-cli app service list
-fnos-cli app entry list --only-hidden
-fnos-cli app desktop list
-fnos-cli app config set-sys --fields '{"autoRunNewApp":true}' --yes
-fnos-cli app config set trim.alist --fields '{"services":[],"extraAuthorizationPath":[]}' --yes
-fnos-cli app config auto-update trim.alist --enable --yes
-fnos-cli app config proxy-access trim.alist --allowed --yes
-fnos-cli app config post-wizard trim.alist --fields '{"customParameters":[]}' --yes
-fnos-cli app guide check-installed trim.media trim.photos
-fnos-cli app guide batch-download-install 2 trim.media trim.photos --yes
-fnos-cli app operation settings
-fnos-cli app openapi app-detail trim.alist
-fnos-cli app openapi allow-user-auth-paths trim.alist
-fnos-cli app openapi add-user-auth-path trim.alist /vol1/1000/docs --yes
-fnos-cli app openapi add-user-auth-inherit-file trim.alist /vol1/1000/docs/file.txt --yes
-fnos-cli app sac app-store-list
-fnos-cli app task-status <taskId>
-fnos-cli app task-cancel <taskId> --yes
-fnos-cli app download cancel <downloadTaskId> --yes
-fnos-cli app install-cancel <taskId> --yes
-fnos-cli app update-cancel <taskId> --yes
-fnos-cli app install trim.alist --version 3.0.13 --source-id 265 --volume-id 2 --dry-run --yes
-fnos-cli app install trim.alist --version 3.0.13 --source-id 265 --volume-id 2 --yes
-fnos-cli app install trim.alist --version 3.0.13 --volume-id 2 --custom-parameters '[{"key":"port","value":8080}]' --api-scope '{"API.User.FileAccess":true}' --yes
-fnos-cli app install trim.alist --version 3.0.13 --volume-id 2 --accept-license --cancel-on-failure --yes
-fnos-cli app install-fpk ~/Downloads/demo.fpk --volume-id 2 --dry-run --yes
-fnos-cli app install-fpk ~/Downloads/demo.fpk --volume-id 2 --yes
-fnos-cli app update trim.alist --version 3.0.14 --volume-id 2 --dry-run --yes
-fnos-cli app update trim.alist --version 3.0.14 --volume-id 2 --yes
-fnos-cli app stop trim.alist --yes
-fnos-cli app start trim.alist --yes
-fnos-cli app uninstall trim.alist --yes
+./scripts/fnos-cli app list
+./scripts/fnos-cli app status trim.alist
+./scripts/fnos-cli app store list
+./scripts/fnos-cli app store search alist
+./scripts/fnos-cli app store detail trim.alist --source-id 265 --version 3.0.13
+./scripts/fnos-cli app store latest-release
+./scripts/fnos-cli app check-update
+./scripts/fnos-cli app check-update --post --yes
+./scripts/fnos-cli app common volume
+./scripts/fnos-cli app common volume --set 2 --yes
+./scripts/fnos-cli app config sys
+./scripts/fnos-cli app config detail trim.alist
+./scripts/fnos-cli app service list
+./scripts/fnos-cli app entry list --only-hidden
+./scripts/fnos-cli app desktop list
+./scripts/fnos-cli app config set-sys --fields '{"autoRunNewApp":true}' --yes
+./scripts/fnos-cli app config set trim.alist --fields '{"services":[],"extraAuthorizationPath":[]}' --yes
+./scripts/fnos-cli app config auto-update trim.alist --enable --yes
+./scripts/fnos-cli app config proxy-access trim.alist --allowed --yes
+./scripts/fnos-cli app config post-wizard trim.alist --fields '{"customParameters":[]}' --yes
+./scripts/fnos-cli app guide check-installed trim.photos trim.alist
+./scripts/fnos-cli app guide batch-download-install 2 trim.photos trim.alist --yes
+./scripts/fnos-cli app operation settings
+./scripts/fnos-cli app openapi app-detail trim.alist
+./scripts/fnos-cli app openapi allow-user-auth-paths trim.alist
+./scripts/fnos-cli app openapi add-user-auth-path trim.alist /vol1/1000/docs --yes
+./scripts/fnos-cli app openapi add-user-auth-inherit-file trim.alist /vol1/1000/docs/file.txt --yes
+./scripts/fnos-cli app sac app-store-list
+./scripts/fnos-cli app task-status <taskId>
+./scripts/fnos-cli app task-cancel <taskId> --yes
+./scripts/fnos-cli app download cancel <downloadTaskId> --yes
+./scripts/fnos-cli app install-cancel <taskId> --yes
+./scripts/fnos-cli app update-cancel <taskId> --yes
+./scripts/fnos-cli app install trim.alist --version 3.0.13 --source-id 265 --volume-id 2 --dry-run --yes
+./scripts/fnos-cli app install trim.alist --version 3.0.13 --source-id 265 --volume-id 2 --yes
+./scripts/fnos-cli app install trim.alist --version 3.0.13 --volume-id 2 --custom-parameters '[{"key":"port","value":8080}]' --api-scope '{"API.User.FileAccess":true}' --yes
+./scripts/fnos-cli app install trim.alist --version 3.0.13 --volume-id 2 --accept-license --cancel-on-failure --yes
+./scripts/fnos-cli app install-fpk ~/Downloads/demo.fpk --volume-id 2 --dry-run --yes
+./scripts/fnos-cli app install-fpk ~/Downloads/demo.fpk --volume-id 2 --yes
+./scripts/fnos-cli app update trim.alist --version 3.0.14 --volume-id 2 --dry-run --yes
+./scripts/fnos-cli app update trim.alist --version 3.0.14 --volume-id 2 --yes
+./scripts/fnos-cli app stop trim.alist --yes
+./scripts/fnos-cli app start trim.alist --yes
+./scripts/fnos-cli app uninstall trim.alist --yes
 ```

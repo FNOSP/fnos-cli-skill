@@ -24,200 +24,200 @@
 
 ### appcgi.eventlogger.common.list
 
-#### Endpoint
+#### 端点
 `appcgi.eventlogger.common.list`
 
-#### Purpose
+#### 用途
 按页查询日志中心记录，支持按级别和模块过滤。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli logger list [--page <n>] [--page-size <n>] [--level <n>] [--module <n>] [--locale <locale>]
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.eventlogger.common.list` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `pageSize` | body | no | number | 每页条数 | 正整数 | `50` |
-| `page` | body | no | number | 页码 | 正整数 | `1` |
-| `level` | body | no | number | 日志级别过滤 | 数值型级别标识 | `3` |
-| `module` | body | no | number | 日志模块过滤 | 数值型模块标识 | `1` |
-| `locale` | body | no | string | 语言/区域 | 影响返回文本的语言 | `zh-CN` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 | `appcgi.eventlogger.common.list` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
+| `pageSize` | 请求体 | 否 | 数值 | 每页条数 | 正整数 | `50` |
+| `page` | 请求体 | 否 | 数值 | 页码 | 正整数 | `1` |
+| `level` | 请求体 | 否 | 数值 | 日志级别过滤 | 数值型级别标识 | `3` |
+| `module` | 请求体 | 否 | 数值 | 日志模块过滤 | 数值型模块标识 | `1` |
+| `locale` | 请求体 | 否 | 字符串 | 语言/区域 | 影响返回文本的语言 | `zh-CN` |
 
-#### Response
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+#### 响应
+| 字段 | 始终存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `data` | no | object | 日志数据 | 包含日志条目和分页信息 | `{...}` |
-| `result` | no | string | Terminal marker | `succ`/`fail` | `succ` |
-| `errno` | no | number | 错误码 | 失败时出现 | `65534` |
-| `errmsg` | no | string | 错误描述 | 失败时出现 | `invalid filter` |
+| `data` | 否 | 对象 | 日志数据 | 包含日志条目和分页信息 | `{...}` |
+| `result` | 否 | 字符串 | 终态标记 | `succ`/`fail` | `succ` |
+| `errno` | 否 | 数值 | 错误码 | 失败时出现 | `65534` |
+| `errmsg` | 否 | 字符串 | 错误描述 | 失败时出现 | `invalid filter` |
 
 ### appcgi.eventlogger.common.moduleList
 
-#### Endpoint
+#### 端点
 `appcgi.eventlogger.common.moduleList`
 
-#### Purpose
+#### 用途
 列出可用的日志模块。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli logger modules [--locale <locale>]
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.eventlogger.common.moduleList` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `locale` | body | no | string | 语言/区域 | 影响模块名称的语言 | `zh-CN` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 | `appcgi.eventlogger.common.moduleList` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
+| `locale` | 请求体 | 否 | 字符串 | 语言/区域 | 影响模块名称的语言 | `zh-CN` |
 
 ### appcgi.eventlogger.common.clear
 
-#### Endpoint
+#### 端点
 `appcgi.eventlogger.common.clear`
 
-#### Purpose
+#### 用途
 按日志级别和模块清空日志记录。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli logger clear --level <level> --module <module> --yes
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.eventlogger.common.clear` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `level` | body | yes | number | 日志级别 | 必填 | `3` |
-| `module` | body | yes | number | 日志模块 | 必填 | `1` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 | `appcgi.eventlogger.common.clear` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
+| `level` | 请求体 | 是 | 数值 | 日志级别 | 必填 | `3` |
+| `module` | 请求体 | 是 | 数值 | 日志模块 | 必填 | `1` |
 
 ### appcgi.eventlogger.common.export
 
-#### Endpoint
+#### 端点
 `appcgi.eventlogger.common.export`
 
-#### Purpose
+#### 用途
 按日志级别和模块导出日志记录。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli logger export --level <level> --module <module> [--locale <locale>] --yes
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.eventlogger.common.export` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `level` | body | yes | number | 日志级别 | 必填 | `3` |
-| `module` | body | yes | number | 日志模块 | 必填 | `1` |
-| `locale` | body | no | string | 语言/区域 | 影响导出内容的语言 | `zh-CN` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 | `appcgi.eventlogger.common.export` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
+| `level` | 请求体 | 是 | 数值 | 日志级别 | 必填 | `3` |
+| `module` | 请求体 | 是 | 数值 | 日志模块 | 必填 | `1` |
+| `locale` | 请求体 | 否 | 字符串 | 语言/区域 | 影响导出内容的语言 | `zh-CN` |
 
 ### appcgi.eventlogger.common.archive
 
-#### Endpoint
+#### 端点
 `appcgi.eventlogger.common.archive`
 
-#### Purpose
+#### 用途
 设置日志归档策略。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli logger archive set --switch <0|1> --file-path <path> [--size-gt <n>] [--date-unit <n>] [--date-before <n>] --yes
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.eventlogger.common.archive` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `switch` | body | yes | number | 归档开关 | `0` 关闭，`1` 开启 | `1` |
-| `filePath` | body | yes | string | 归档文件路径 | 禁用归档时可传空字符串 | `/vol1/logs` |
-| `sizeGt` | body | no | number | 文件大小阈值 | 可选 | `1024` |
-| `dateUnit` | body | no | number | 日期单位 | `0` 天，`1` 周，`2` 月，`3` 年 | `2` |
-| `dateBefore` | body | no | number | 日期偏移量 | 可选 | `3` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 | `appcgi.eventlogger.common.archive` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
+| `switch` | 请求体 | 是 | 数值 | 归档开关 | `0` 关闭，`1` 开启 | `1` |
+| `filePath` | 请求体 | 是 | 字符串 | 归档文件路径 | 禁用归档时可传空字符串 | `/vol1/logs` |
+| `sizeGt` | 请求体 | 否 | 数值 | 文件大小阈值 | 可选 | `1024` |
+| `dateUnit` | 请求体 | 否 | 数值 | 日期单位 | `0` 天，`1` 周，`2` 月，`3` 年 | `2` |
+| `dateBefore` | 请求体 | 否 | 数值 | 日期偏移量 | 可选 | `3` |
 
-#### Field Semantics
+#### 字段语义
 - `switch` 为 `0` 时表示关闭归档，此时 `filePath` 可传空字符串。
 - `dateUnit` 定义时间粒度：`0` 天、`1` 周、`2` 月、`3` 年。
 
 ### appcgi.eventlogger.common.archive.get
 
-#### Endpoint
+#### 端点
 `appcgi.eventlogger.common.archive.get`
 
-#### Purpose
+#### 用途
 查询当前日志归档配置。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli logger archive query
 ```
 
-#### Protocol Notes
+#### 协议说明
 - 响应包含当前归档配置，CLI 直接打印后端返回的 payload。
 - 响应中 `validPath` 字段（如存在）表示路径有效性状态。
 
 ### appcgi.eventlogger.debuglog.copyStart
 
-#### Endpoint
+#### 端点
 `appcgi.eventlogger.debuglog.copyStart`
 
-#### Purpose
+#### 用途
 复制后端诊断日志（Debug Log）到指定输出目录，并返回任务进度。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli logger debuglog copy-start --output-dir <path> [--srv-type <0|1|2>]... --yes
 fnos-cli diagnostic-log export --output-dir <path> [--srv-type <0|1|2>]... --yes
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.eventlogger.debuglog.copyStart` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `outputDir` | body | yes | string | 输出目录 | CLI 要求已挂载存储空间或外挂盘路径，格式如 `/vol1/<dir>` 或 `/vol00/<mount>/<dir>`；不要使用系统目录如 `/tmp`、`/var/tmp`、`/home/...` | `/vol00/RemovableDisk/debug-log` |
-| `srvType` | body | no | number[] | 复制类别 | `0` 系统，`1` 内置应用，`2` 内置服务；未传时后端按全部类别处理。CLI 支持重复传入或逗号分隔，并按顺序去重。 | `[0,1,2]` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 | `appcgi.eventlogger.debuglog.copyStart` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
+| `outputDir` | 请求体 | 是 | 字符串 | 输出目录 | CLI 要求已挂载存储空间或外挂盘路径，格式如 `/vol1/<dir>` 或 `/vol00/<mount>/<dir>`；不要使用系统目录如 `/tmp`、`/var/tmp`、`/home/...` | `/vol00/RemovableDisk/debug-log` |
+| `srvType` | 请求体 | 否 | 数值数组 | 复制类别 | `0` 系统，`1` 内置应用，`2` 内置服务；未传时后端按全部类别处理。CLI 支持重复传入或逗号分隔，并按顺序去重。 | `[0,1,2]` |
 
-#### Response
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+#### 响应
+| 字段 | 始终存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `taskId` | no | string | 复制任务 ID | doing/success 进度帧的 `data` 中返回 | `ftask_1` |
-| `fileNumTotal` | no | number | 需要复制的文件总数 | 进度帧返回 | `51` |
-| `fileNumDone` | no | number | 已复制文件数 | 进度帧返回 | `2` |
+| `taskId` | 否 | 字符串 | 复制任务 ID | doing/success 进度帧的 `data` 中返回 | `ftask_1` |
+| `fileNumTotal` | 否 | 数值 | 需要复制的文件总数 | 进度帧返回 | `51` |
+| `fileNumDone` | 否 | 数值 | 已复制文件数 | 进度帧返回 | `2` |
 
-#### Protocol Notes
+#### 协议说明
 - 后端可能先返回 `result:"doing"` 进度帧，再返回终态帧。CLI 会优先展示带 `taskId` 的进度 payload，方便后续执行 `diagnostic-log stop`。
 - `outputDir` 必须预先存在于设备侧已挂载的存储空间或外挂盘下。普通存储常见路径是 `/volN/<uid>/...`；外挂盘常见路径是 `/vol00/<mount-name>/...`。
 
-#### Errors
+#### 错误
 - 常见错误包括缺少 `outputDir`、目录不存在、创建目录失败、目录不可写、磁盘空间不足、重复任务、任务不存在等。
 
 ### appcgi.eventlogger.debuglog.copyStop
 
-#### Endpoint
+#### 端点
 `appcgi.eventlogger.debuglog.copyStop`
 
-#### Purpose
+#### 用途
 取消正在进行的诊断日志复制任务。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli logger debuglog copy-stop --task-id <taskId> --yes
 fnos-cli diagnostic-log stop --task-id <taskId> --yes
 ```
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value | `appcgi.eventlogger.debuglog.copyStop` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
-| `taskId` | body | yes | string | 复制任务 ID | CLI 要求非空且不包含空白字符 | `ftask_1` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 | `appcgi.eventlogger.debuglog.copyStop` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
+| `taskId` | 请求体 | 是 | 字符串 | 复制任务 ID | CLI 要求非空且不包含空白字符 | `ftask_1` |
 
 ## 注意事项
 - 旧版 `log.*` 家族端点和当前 `appcgi.eventlogger.common.*` 端点可能在不同固件版本上共存。

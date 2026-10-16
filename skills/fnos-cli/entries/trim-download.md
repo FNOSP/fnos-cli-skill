@@ -1,26 +1,22 @@
 ---
 name: trim-download
-description: List, search, create and control download tasks; inspect task files, statistics and state transitions.
+description: 列出、搜索、创建和控制下载任务，查看任务文件、统计和状态变化。
 ---
 
-# Downloads
+# 下载
 
-Read `../reference/download.md` for command signatures and endpoint fields.
-Use for URI, magnet and torrent tasks, save directories, priorities and task retries.
+命令格式及端点字段见 `../reference/download.md`。本模块用于 URI、磁力链接和种子任务、保存目录、优先级与任务重试。
 
-## Rules
+## 规则
 
-- Creating tasks uses `download add-uri <uri> <saveDir>` or
-  `download add-path <path> <saveDir>`; save directories are concrete `/vol{n}/...` paths.
-- `download stat` reports aggregate statistics, not one file's metadata.
-- `download pause|resume|retry|rm <id...>` affects existing tasks and does not infer paths.
-- Task creation and control require explicit `--yes`.
-- Paths in `download info` / `download files` directly reflect fnOS volume
-  definitions; use the returned paths rather than deriving replacements.
-- Unwrapped `appcgi.downloadcenter.*` endpoints use `download request`; omit
-  `req` and `reqid` from JSON.
+- 创建任务使用 `download add-uri <uri> <saveDir>` 或 `download add-path <path> <saveDir>`；保存目录必须是具体 `/vol{n}/...` 路径。
+- `download stat` 返回汇总统计，不是单文件元数据。
+- `download pause|resume|retry|rm <id...>` 操作现有任务，不推断文件路径。
+- 创建和控制任务必须显式传入 `--yes`。
+- `download info` / `download files` 中的路径直接反映 fnOS 卷定义；使用返回路径，不自行推导替代路径。
+- 未封装的 `appcgi.downloadcenter.*` 端点使用 `download request`；JSON 中不填写 `req` 和 `reqid`。
 
-## Commands
+## 命令
 
 ```bash
 fnos-cli download ls

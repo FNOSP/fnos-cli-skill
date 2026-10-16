@@ -34,13 +34,13 @@
 
 ### appcgi.resmon.cpu
 
-#### Endpoint
+#### 端点
 `appcgi.resmon.cpu`
 
-#### Purpose
+#### 用途
 返回 CPU 监控指标。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli monitor cpu
 ```
@@ -49,40 +49,40 @@ CLI 行为：
 - 复用 session 恢复流程。
 - 将端点返回数据以 JSON 格式打印。
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value `appcgi.resmon.cpu` | `appcgi.resmon.cpu` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 `appcgi.resmon.cpu` | `appcgi.resmon.cpu` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
 
-#### Response
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+#### 响应
+| 字段 | 始终存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `data` | no | object | CPU 指标数据 | CLI 直接打印此对象 | `{"usage":37,"cores":4}` |
-| `result` | no | string | Terminal marker | `succ`/`fail` | `succ` |
-| `errno` | no | number | 错误码 | 失败时出现 | `5001` |
-| `errmsg` | no | string | 错误描述 | 失败时出现 | `monitor backend unavailable` |
+| `data` | 否 | 对象 | CPU 指标数据 | CLI 直接打印此对象 | `{"usage":37,"cores":4}` |
+| `result` | 否 | 字符串 | 终态标记 | `succ`/`fail` | `succ` |
+| `errno` | 否 | 数值 | 错误码 | 失败时出现 | `5001` |
+| `errmsg` | 否 | 字符串 | 错误描述 | 失败时出现 | `monitor backend unavailable` |
 
-#### Protocol Notes
+#### 协议说明
 - 使用签名请求（当 session secret 可用时）。
 - 签名格式遵循 `_conventions.md` 中定义的规范。
 
-#### Field Semantics
+#### 字段语义
 - 返回数据结构由后端定义，CLI 不做字段重映射。
 
-#### Errors
+#### 错误
 - 后端错误通过统一格式化器输出到 stderr，包含 errno。
 - 命令以非零退出码退出。
 
 ### appcgi.resmon.mem
 
-#### Endpoint
+#### 端点
 `appcgi.resmon.mem`
 
-#### Purpose
+#### 用途
 返回内存监控指标。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli monitor memory
 ```
@@ -91,28 +91,28 @@ CLI 行为：
 - 复用 session 恢复流程。
 - 将端点返回数据以 JSON 格式打印。
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value `appcgi.resmon.mem` | `appcgi.resmon.mem` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 `appcgi.resmon.mem` | `appcgi.resmon.mem` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
 
-#### Response
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+#### 响应
+| 字段 | 始终存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `data` | no | object | 内存指标数据 | CLI 直接打印此对象 | `{"total":1024,"used":768}` |
-| `result` | no | string | Terminal marker | `succ`/`fail` | `succ` |
-| `errno` | no | number | 错误码 | 失败时出现 | `5001` |
-| `errmsg` | no | string | 错误描述 | 失败时出现 | `monitor backend unavailable` |
+| `data` | 否 | 对象 | 内存指标数据 | CLI 直接打印此对象 | `{"total":1024,"used":768}` |
+| `result` | 否 | 字符串 | 终态标记 | `succ`/`fail` | `succ` |
+| `errno` | 否 | 数值 | 错误码 | 失败时出现 | `5001` |
+| `errmsg` | 否 | 字符串 | 错误描述 | 失败时出现 | `monitor backend unavailable` |
 
-#### Protocol Notes
+#### 协议说明
 - 使用签名请求（当 session secret 可用时）。
 - 签名格式遵循 `_conventions.md` 中定义的规范。
 
-#### Field Semantics
+#### 字段语义
 - 返回数据结构由后端定义，CLI 不做字段重映射。
 
-#### Errors
+#### 错误
 - 后端错误通过统一格式化器输出到 stderr，包含 errno。
 - 命令以非零退出码退出。
 
@@ -120,7 +120,7 @@ CLI 行为：
 
 以下端点均复用已保存 session，执行签名请求，并打印响应 `data` 对象。
 
-| CLI 命令 | Endpoint | Request 参数 | 用途 |
+| CLI 命令 | 端点 | 请求参数 | 用途 |
 | --- | --- | --- | --- |
 | `fnos-cli monitor gen --item storeSpeed,netSpeed` | `appcgi.resmon.gen` | `item`: 仅支持 `storeSpeed`、`netSpeed`、`cpuBusy`、`memPercent`；可重复传 `--item` 或用逗号分隔 | 聚合指标查询 |
 | `fnos-cli monitor net` | `appcgi.resmon.net` | 无 | 网络指标 |
@@ -144,7 +144,7 @@ CLI 行为：
 
 ### 写操作和泛化请求
 
-| CLI 命令 | Endpoint | Request 参数 | 风险控制 |
+| CLI 命令 | 端点 | 请求参数 | 风险控制 |
 | --- | --- | --- | --- |
 | `fnos-cli monitor mute-beeper` | `appcgi.resmon.alert.muteBeeper` | 无 | 默认需要确认；可用 `--yes` 跳过 |
 | `fnos-cli monitor request appcgi.resmon.* --json '<object>'` | 用户指定的 `appcgi.resmon.*` 端点 | JSON 对象，不能包含 `req` 或 `reqid` | 默认需要确认；可用 `--yes` 跳过 |

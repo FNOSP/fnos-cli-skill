@@ -43,13 +43,13 @@
 
 ### appcgi.sysinfo.getTrimMachineType
 
-#### Endpoint
+#### 端点
 `appcgi.sysinfo.getTrimMachineType`
 
-#### Purpose
+#### 用途
 返回 NAS 机器类型标识信息。
 
-#### Trim CLI Mapping
+#### CLI 映射
 ```
 fnos-cli system info
 ```
@@ -58,27 +58,27 @@ CLI 行为：
 - 不要求已保存的 session。
 - 将 `response.data` 以 JSON 格式打印；如果 `data` 不存在则报错。
 
-#### Request
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+#### 请求
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | Fixed value `appcgi.sysinfo.getTrimMachineType` | `appcgi.sysinfo.getTrimMachineType` |
-| `reqid` | body | yes | string | Request correlation ID | Generated per request | `69ba...` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 `appcgi.sysinfo.getTrimMachineType` | `appcgi.sysinfo.getTrimMachineType` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
 
-#### Response
-| Field | Always Present | Type | Meaning | Conditions / Notes | Example |
+#### 响应
+| 字段 | 始终存在 | 类型 | 含义 | 条件 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- |
-| `data` | no | object | 机器类型信息 | CLI 优先提取此字段 | `{"type":"trim-xx"}` |
-| `result` | no | string | Terminal marker | `succ`/`fail` | `succ` |
-| `errno` | no | number | 错误码 | 失败时出现 | `65534` |
-| `errmsg` | no | string | 错误描述 | 失败时出现 | `permission denied` |
+| `data` | 否 | 对象 | 机器类型信息 | CLI 优先提取此字段 | `{"type":"trim-xx"}` |
+| `result` | 否 | 字符串 | 终态标记 | `succ`/`fail` | `succ` |
+| `errno` | 否 | 数值 | 错误码 | 失败时出现 | `65534` |
+| `errmsg` | 否 | 字符串 | 错误描述 | 失败时出现 | `permission denied` |
 
-#### Protocol Notes
+#### 协议说明
 - 使用普通 JSON 请求。
 
-#### Field Semantics
+#### 字段语义
 - 返回数据的具体字段由后端定义，可能因机型和固件版本而异。
 
-#### Errors
+#### 错误
 - 后端错误通过统一格式化器输出。
 - 缺少 `data` 时命令会以非零退出码失败。
 
@@ -86,7 +86,7 @@ CLI 行为：
 
 以下端点均为只读查询，不要求已保存 session，并打印响应 `data` 对象。
 
-| CLI 命令 | Endpoint | Request 参数 | 用途 |
+| CLI 命令 | 端点 | 请求参数 | 用途 |
 | --- | --- | --- | --- |
 | `fnos-cli system trim-version` | `appcgi.sysinfo.getTrimVersion` | 无 | 系统版本 |
 | `fnos-cli system kernel-version` | `appcgi.sysinfo.getKernelVersion` | 无 | 内核版本 |
@@ -114,7 +114,7 @@ CLI 行为：
 
 ### 泛化请求
 
-| CLI 命令 | Endpoint | Request 参数 | 风险控制 |
+| CLI 命令 | 端点 | 请求参数 | 风险控制 |
 | --- | --- | --- | --- |
 | `fnos-cli system request appcgi.sysinfo.* --json '<object>'` | 用户指定的 `appcgi.sysinfo.*` 端点 | JSON 对象，不能包含 `req` 或 `reqid` | 默认需要确认；可用 `--yes` 跳过 |
 

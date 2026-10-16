@@ -1,27 +1,22 @@
 ---
 name: trim-system
-description: Inspect static system identity, model, versions, volumes, hardware and power schedules, or reboot and power off a device.
+description: 查看静态系统标识、机型、版本、卷、硬件和电源计划，或重启、关闭设备。
 ---
 
-# System and power
+# 系统与电源
 
-Read `../reference/sysinfo.md` and `../reference/power.md`. Query the matching
-`system` commands individually for hardware, volumes and power plans.
+阅读 `../reference/sysinfo.md` 和 `../reference/power.md`。分别调用对应 `system` 命令查询硬件、卷和电源计划。
 
-## Rules
+## 使用规则
 
-- Static identity/configuration belongs here; CPU and memory runtime metrics use `trim-monitor.md`.
-- Named `system` commands are read-only; generic `system request` requires
-  confirmation or explicit `--yes` by default.
-- `power reboot` / `power poweroff` interrupt services. Confirm the target and
-  user authorization before passing `--yes`.
-- `system request` allows only `appcgi.sysinfo.*`; omit `req` and `reqid` from JSON.
-- Generic requests authenticate with the saved session; sign in to the target first.
-- Machine type and version fields vary with CLI/firmware. Treat current
-  `system info` output as authoritative; report unexpected or empty fields as
-  possible version differences rather than inventing values.
+- 静态标识与配置属于本模块；CPU、内存等运行时指标阅读 `trim-monitor.md`。
+- 固定 `system` 命令只读；通用 `system request` 默认需要确认或明确传入 `--yes`。
+- `power reboot` / `power poweroff` 会中断服务。确认目标和用户授权后才使用 `--yes`。
+- `system request` 仅接受 `appcgi.sysinfo.*`；JSON 中不提供 `req` 和 `reqid`。
+- 通用请求使用已保存的会话认证，先登录目标设备。
+- 机器类型与版本字段可能随 CLI/固件变化。以当前 `system info` 输出为准；意外或空字段应报告为可能的版本差异，不能编造值。
 
-## Commands
+## 命令
 
 ```bash
 fnos-cli system info
@@ -41,8 +36,8 @@ fnos-cli system is-trim-machine
 fnos-cli system trim-feature
 fnos-cli system fan-mode
 fnos-cli system trim-disk
-fnos-cli system time-setting --lang en-US
-fnos-cli system timezone-list --lang en-US
+fnos-cli system time-setting --lang zh-CN
+fnos-cli system timezone-list --lang zh-CN
 fnos-cli system power-plan
 fnos-cli system next-power-off-time
 fnos-cli system power-plan-status
@@ -51,7 +46,7 @@ fnos-cli system inited-timestamp
 fnos-cli system request appcgi.sysinfo.getTrimVersion --yes
 ```
 
-## Power operations
+## 电源操作
 
 ```bash
 fnos-cli power reboot --yes

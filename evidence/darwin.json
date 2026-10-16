@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "kind": "installed-cli-smoke",
+  "result": "PASS",
+  "checkedAt": "2026-10-16T12:49:24.437Z",
+  "candidate": {
+    "sha256": "c7027933f66a747ead968e106e363437c7b983f0758a516e12e38ab4b78a8598",
+    "variant": "fnos",
+    "packageName": "@fnnas-labs/fnos-cli",
+    "commandName": "fnos-cli",
+    "skillName": "fnos-cli",
+    "locale": "zh-CN",
+    "repository": "fnnas-labs/fnos-cli-skill",
+    "version": "0.4.0",
+    "sourceCommit": "0a474862e0fb290407183efea73f4f21259f2857",
+    "sourceSha256": "85d47e4e65950ec47e5b37585cd5ca949629183890b5052d067d03ce216c19bc",
+    "mode": "tagged",
+    "sourceTag": "v0.4.0",
+    "assets": [
+      {
+        "name": "fnnas-labs-fnos-cli-0.4.0.tgz",
+        "sha256": "32fedfaa14aa9449a1c1459d9b6e398b248bacc860dfbc4a911886bc9950fa72"
+      },
+      {
+        "name": "fnos-skill.zip",
+        "sha256": "bcf9e3b65bb98e7a9fe6b590f5b9b101393656c858c5d06d8b427f7e3e7d708a"
+      }
+    ]
+  },
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "machine": "arm64",
+    "release": "27.0.0",
+    "node": "v24.16.0",
+    "npm": "11.19.1",
+    "tools": {
+      "node": "/usr/local/bin/node",
+      "npm": "/usr/local/bin/npm",
+      "unzip": "/usr/bin/unzip"
+    }
+  },
+  "ci": {
+    "pipelineId": "11036",
+    "jobId": "34383",
+    "runnerId": "46",
+    "runnerArchitecture": "darwin/arm64",
+    "commit": "0a474862e0fb290407183efea73f4f21259f2857"
+  },
+  "checks": [
+    "installed-shim-version",
+    "installed-shim-help",
+    "installed-skill",
+    "product-boundary",
+    "native-version-source"
+  ],
+  "notVerified": [
+    "NAS/device operations",
+    "OAuth authorization",
+    "npm registry installation",
+    "other CPU architectures"
+  ]
+}

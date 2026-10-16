@@ -1,170 +1,61 @@
 ---
 name: fnos-cli
-description: Use fnos-cli to sign in to and manage fnOS devices, including files, photos, applications, Docker, downloads, logs, monitoring, networking, storage, users, and Baidu Netdisk. Use when the user mentions fnOS, Feiniu OS, or a mainland China device. Excludes Media APIs and international-edition devices.
+description: 使用 fnos-cli 授权并管理 fnOS 设备的文件、照片、应用、Docker、下载、日志、监控、网络、存储、用户和百度网盘。用户提到 fnOS、飞牛系统或国内版设备时使用；不适用于国际版设备或 Media API。
 ---
 
 # fnOS
 
-## CLI setup
+## CLI 安装
 
-This Skill uses the latest available fnOS CLI and requires Node.js 18+.
-Install or explicitly update the CLI:
+需要 Node.js 18+。安装或显式升级 CLI：
 
 ```bash
 npm install -g @fnnas-labs/fnos-cli@latest
 fnos-cli --version
 ```
 
-Without a global installation, replace `fnos-cli` with
-`npx -y --package=@fnnas-labs/fnos-cli@latest fnos-cli`.
-Check the installed command's `--help` before using a documented capability.
-During npm processing, latest may still resolve to the previous version.
-If a command is unavailable, report the actual version and update later;
-do not assume every documented feature is already available.
-Existing installations do not update automatically.
-Installing a Skill does not install the CLI or sign in to a device.
-For OAuth, follow the two-step flow below: the Agent shares a link and exchanges the code the user sends back. The user handles credentials and consent only in the browser.
+不全局安装时，将 `fnos-cli` 替换为 `npx -y --package=@fnnas-labs/fnos-cli@latest fnos-cli`。执行前检查相应 `--help`。npm 处理发布期间 `latest` 可能仍为上一版；现有安装不会自动更新。安装 Skill 不会自动安装 CLI 或登录设备；按下方授权说明让 Agent 生成链接，用户自行浏览器授权并回传一次性 code。
 
 
-The command-line client for fnOS. It uses the HTTP API proxy for
-system services and native applications: authentication, files, photos, apps,
-Docker, downloads, logs, monitoring, networking, power, storage, and users.
+使用 `fnos-cli` 管理设备。安装与升级都是显式操作；执行前检查实际版本和命令帮助。
 
-Examples assume `fnos-cli` is available on PATH. An integration may provide
-an explicit package-local launcher instead; follow that integration's instructions.
 
-## Task routing
+## 授权与连接
 
-Choose the most specific entry, then follow its reference or workflow. For a
-product-specific task not listed below, inspect the descriptions in `entries/`.
+登录、profile、连接失败及授权恢复先读[连接入口](entries/trim-shared.md)和 [OAuth 指南](reference/oauth.md)。字段约定见[公共约定](reference/_conventions.md)，模块使用方式见[索引](reference/_index.md)。
 
-| Task | Entry |
-| --- | --- |
-| Sign in, sessions, connection failures, profiles | `entries/trim-shared.md`, `reference/_index.md` |
-| Files, finder, shares, ACLs, uploads and downloads | `entries/trim-file.md`, `reference/workflows/file-routing.md` |
-| Photo search, AI search, details and previews | `entries/trim-photos.md`, `reference/workflows/photos-routing.md` |
-| Apps, Docker, downloads, logs and monitoring | Matching file in `entries/`, `reference/_index.md` |
-| Storage writes | `entries/trim-storage.md`, `reference/workflows/storage-dangerous-ops.md` |
-| Users, groups and permissions | `entries/trim-user.md`, `reference/user.md` |
-| Device validation | `reference/workflows/device-validation.md` |
-
-## Safety rules
-
-- Media APIs are outside this Skill's scope; use the documented capabilities only.
-- Authentication uses OAuth 2.0 Authorization Code + PKCE. The user handles NAS
-  credentials and 2FA in their browser; never collect passwords or old tokens.
-- OAuth uses `client_id=YJNMPJUGA9` and the CLI's required `trim.*` scopes. See
-  `reference/oauth.md` for the full list. Authorization URLs omit `redirect_uri`.
-- Agent login uses two noninteractive calls: `login --authorize-only` generates
-  a link; the user opens it, authorizes in the browser and sends the one-time code
-  back to the Agent; `login --code <code>` completes the exchange. The user does
-  not need a terminal. Follow `reference/oauth.md` before starting or resuming login.
-- The user alone enters credentials and approves access in the browser. Accept
-  only the code they explicitly send; keep it out of replies, files and extra logs.
-- Run both login calls and later commands on the same Host, as the same system
-  user, with the same configuration environment, profile and NAS target.
-  Remote browsers, SSH shells and containers do not automatically share sessions.
-- Sessions hold access/refresh tokens, expiry and OAuth device information. Store
-  secrets only in platform secure storage or an explicitly selected file backend;
-  keep them out of ordinary output, logs and third-party messages.
-- When token exchange includes a device access code, the CLI stores it with the
-  session and adds gateway access headers automatically. The Agent never needs
-  the device code.
-- Tokens refresh near expiry. HTTP 401 from `/ogh/ac/w` or `/ogh/ac/h/*` triggers
-  one refresh and one retry. Repeated 401 or refresh failure requires a new OAuth
-  login, not a retry loop or a legacy authentication fallback.
-- Refresh first checks that the profile's session store is writable. Concurrent
-  refreshes reuse an already-written newer token.
-- Missing module scopes, including legacy `file photo` grants, require login
-  again; refresh cannot add scopes.
-- `logout` removes the profile's session and OAuth pending file. It does not
-  claim to revoke server-side tokens.
-- Remote plain HTTP requires `--allow-insecure-http`; self-signed HTTPS requires
-  `--tls-insecure`.
-- Agent and noninteractive writes explicitly pass `--yes`. High-risk storage
-  writes also require the relevant password precheck.
-
-## Connection options
-
-```text
---host <host>                 NAS host; defaults to localhost
---port <port>                 Explicit port takes precedence
---profile <name>              Independent session profile
---scheme auto|http|https      Transport; defaults to auto
---allow-insecure-http         Allow remote plain HTTP
---tls-insecure                Allow self-signed HTTPS
-```
-
-Without explicit connection options, the CLI reuses the profile's saved host,
-port, scheme and TLS settings. Defaults are `http://localhost:5666` for loopback,
-HTTPS 5667 for remote IPs, and HTTPS 443 for domain names.
-
-## Authentication
-
-The Agent runs the first command, shares the returned `authorization_url`, and
-waits for the user to send the one-time code. Only then run the second command
-with exactly the same connection options and profile:
+1. Agent 在用户指定的目标和 profile 执行 `login --authorize-only`，把返回链接交给用户。
+2. 用户自行在浏览器登录并授权，把一次性 code 主动发回。用户无需运行终端。
+3. Agent 在同一执行主机、系统用户、配置环境、profile 和连接参数下执行 `login --code`。确认令牌已保存并执行只读验证后才报告连接成功。
 
 ```bash
-fnos-cli --profile home --host <host> --port <port> --scheme https login --authorize-only
-fnos-cli --profile home --host <host> --port <port> --scheme https login --code '<code>'
+fnos-cli --profile home --host <host> --port <port> login --authorize-only
+fnos-cli --profile home --host <host> --port <port> login --code '<code>'
 fnos-cli --profile home system info
 ```
 
-Keep only one pending authorization per profile; do not generate another link
-while waiting for its code. A pending response is not a completed login. Confirm
-token persistence and a read-only request before reporting success.
+用户密码、2FA 和浏览器确认由用户处理。只接收用户主动发来的 code，不复述、额外落盘或转发。code 可能留在聊天、工具调用和进程参数中；不能承诺无留存。token 与 PKCE verifier 留在 CLI 受控存储，不输出到聊天。
 
-For a remote plain HTTP device, use the same HTTP options in both calls:
+## 使用规则
 
-```bash
-fnos-cli --profile home --host <host> --port 5666 --scheme http --allow-insecure-http login --authorize-only
-fnos-cli --profile home --host <host> --port 5666 --scheme http --allow-insecure-http login --code '<code>'
-```
+- 两产品的命令、配置、profile 与登录状态独立。新版需重新授权，不读取或迁移旧登录数据，也不自动删除旧凭据。
+- 只使用本产品的 `FNOS_CLI_*` 配置变量。没有显式连接参数时，仅恢复当前产品、当前 profile 的目标；无记录时使用 `localhost:5666`。
+- 文件写操作默认使用具体 `/vol{n}/...` 路径。高风险操作须核实用户意图及命令的 `--yes` 要求；不把设备验收变成默认写操作。
+- `raw` 仅对内置审计过的只读端点免除 `--yes`；未知端点名称不能证明只读。
+- CLI 和 Skill 来自同一版本的包。首次安装、升级或公开文档变化后检查实际 `--version` 和相关 `--help`，不假定 `latest` 已完成传播。
 
-Plain `login` (optionally `--no-open`) remains available for users who explicitly
-prefer manual terminal login; it is not required for Agent onboarding.
+## 命令与任务一览
 
-## Common read-only commands
-
-```bash
-fnos-cli --profile home system info
-fnos-cli --profile home file ls /vol1
-fnos-cli --profile home file ls-dir /vol1
-fnos-cli --profile home file usage 1
-fnos-cli --profile home photos folders
-fnos-cli --profile home photos search <keyword> --limit 20
-fnos-cli --profile home app list
-fnos-cli --profile home docker image ls
-fnos-cli --profile home download ls
-fnos-cli --profile home monitor cpu
-fnos-cli --profile home monitor beep-supported
-fnos-cli --profile home storage pools
-fnos-cli --profile home user info
-```
-
-## Raw requests
-
-Use `raw` for system services without a named command, and `photos request` for
-the native Photos HTTP API. Only audited read-only endpoints built into the CLI
-may omit `--yes`; every other endpoint, including unknown endpoints, requires
-confirmation and explicit `--yes`. Paths and request bodies are still validated.
-Check both HTTP status and business response code/final state, not just exit code.
-
-## Output
-
-Named commands output JSON plans or business data. Photos search `total` is the
-match count. AI search may report an exact total only when the response provides
-a stable total; otherwise report the returned count. Preview URLs usually still
-require a signed-in browser cookie.
-
-`file ls-dir` collects directory chunks into a JSON array. `file usage` collects
-capacity categories into a JSON array; repeated categories keep their last
-result instead of being added together.
-
-## References
-
-- Index: `reference/_index.md`
-- OAuth contract: `reference/oauth.md`
-- Photos API: `reference/photos.md`
-- Connections and validation: `entries/trim-shared.md`, `reference/workflows/device-validation.md`
+- [连接与授权](entries/trim-shared.md): 登录、选择连接目标或 profile、排查登录状态和连接问题，以及应用通用安全规则时使用。
+- [文件](entries/trim-file.md): 列出或搜索文件、上传本地文件、检查共享目录和 ACL，或判断当前用户目录与 NAS 路径语义时使用。
+- [照片](entries/trim-photos.md): 浏览相册扫描目录、搜索照片、查看详情，以及获取缩略图或原图预览地址时使用。
+- [应用中心](entries/trim-app.md): 管理已安装应用、应用中心安装、FPK 软件包、更新、应用入口与生命周期操作。
+- [Docker](entries/trim-docker.md): 查看和管理 Docker 镜像、容器、Compose 项目及长时间运行的生命周期操作。
+- [下载](entries/trim-download.md): 列出、搜索、创建和控制下载任务，查看任务文件、统计和状态变化。
+- [百度网盘](entries/trim-baidu-netdisk.md): 检查百度网盘授权、容量、云端文件、分享保存、NAS 传输和定时同步。
+- [日志](entries/trim-log.md): 浏览筛选日志、列举日志模块、清除或导出记录、配置归档，并复制或取消诊断日志。
+- [监控](entries/trim-monitor.md): 查看 CPU、内存、网络、磁盘、进程、服务、电池、风扇、GPU/NPU 与蜂鸣器告警等运行时指标。
+- [网络](entries/trim-network.md): 管理网络服务开关，包括开启或关闭 SSH，并确认写操作的授权要求。
+- [存储](entries/trim-storage.md): 查看存储池、磁盘与 SMART 数据，或执行挂载、扩容、磁盘替换、格式化等高风险存储写操作。
+- [系统与电源](entries/trim-system.md): 查看静态系统标识、机型、版本、卷、硬件和电源计划，或重启、关闭设备。
+- [用户与权限](entries/trim-user.md): 查看用户、组、登录设备和当前权限，管理用户，或选择正确的已授权 profile。

@@ -1,21 +1,23 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { createHash } = require("node:crypto");
+const { product } = require("./products.cjs");
 
 const CONTROL_FILES = Object.freeze([
   ".gitattributes", ".github/workflows/publish.yml", "scripts/release.cjs", "scripts/bridge.cjs",
-  "release.json", "SHA256SUMS", "bridge-files.json"
+  "release.json", "SHA256SUMS", "bridge-files.json", "scripts/products.cjs", "scripts/candidate-smoke-evidence.cjs",
+  "evidence/candidate.json", "evidence/gate.json", "evidence/darwin.json", "evidence/linux.json", "evidence/win32.json"
 ]);
 const BRIDGE_ROOT_FILES = Object.freeze([
   "README.md", "package.json", "index.mjs", "cordis.patch.yml", ".gitignore",
   "LICENSE", "THIRD_PARTY_NOTICES.txt", "npm/dsh.mjs"
 ]);
-const required = [...BRIDGE_ROOT_FILES, "skills/fnos-cli/SKILL.md", "skills/fnos-cli/LICENSE", "skills/fnos-cli/THIRD_PARTY_NOTICES.txt"];
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
-
-function isBridgePath(name) {
-  return typeof name === "string" && (BRIDGE_ROOT_FILES.includes(name)
-    || /^skills\/fnos-cli\/(SKILL\.md|LICENSE|THIRD_PARTY_NOTICES\.txt|(?:entries|reference)\/[a-z0-9_-]+(?:\/[a-z0-9_-]+)*\.md)$/.test(name));
+function rootFiles(variant) { return product(variant).dsh ? BRIDGE_ROOT_FILES : ["README.md", "package.json", ".gitignore", "LICENSE", "THIRD_PARTY_NOTICES.txt"]; }
+function isBridgePath(name, variant = "fnos") {
+  const id = product(variant);
+  return typeof name === "string" && (rootFiles(variant).includes(name)
+    || new RegExp(`^skills/${id.commandName}/(SKILL\\.md|LICENSE|THIRD_PARTY_NOTICES\\.txt|(?:entries|reference)/[a-z0-9_-]+(?:/[a-z0-9_-]+)*\\.md)$`).test(name));
 }
 
 function regularFile(root, name) {
@@ -36,13 +38,16 @@ function writeBridgeManifest(root, files, version) {
 }
 
 function readBridge(root, release) {
+  const variant = release.variant || "fnos";
+  const id = product(variant);
+  const required = [...rootFiles(variant), ...["SKILL.md", "LICENSE", "THIRD_PARTY_NOTICES.txt"].map(name => `skills/${id.commandName}/${name}`)];
   const file = regularFile(root, "bridge-files.json");
   const bytes = fs.readFileSync(file);
   if (digest(bytes) !== release.bridgeManifestSha256) throw new Error("Public bridge manifest checksum mismatch");
   const manifest = JSON.parse(bytes);
   if (manifest.schemaVersion !== 1 || manifest.version !== release.version || !Array.isArray(manifest.files)
     || manifest.files.length < required.length
-    || manifest.files.some((item) => !item || !isBridgePath(item.path) || !/^[a-f0-9]{64}$/.test(item.sha256))
+    || manifest.files.some((item) => !item || !isBridgePath(item.path, variant) || !/^[a-f0-9]{64}$/.test(item.sha256))
     || new Set(manifest.files.map((item) => item.path)).size !== manifest.files.length
     || required.some((name) => !manifest.files.some((item) => item.path === name))) {
     throw new Error("Invalid public bridge file allowlist");
@@ -53,11 +58,11 @@ function readBridge(root, release) {
     }
   }
   const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-  if (pkg.name !== "fnos-cli-skill" || pkg.version !== release.version || pkg.private !== true
-    || pkg.main !== "index.mjs" || pkg.license !== "MIT" || pkg.type !== "module"
-    || pkg.repository?.url !== "https://github.com/fnnas-labs/fnos-cli-skill.git"
-    || JSON.stringify(pkg.dependencies) !== JSON.stringify({ "@fnnas-labs/fnos-cli": "latest" })
-    || pkg.dsh?.bundle?.patch !== "./cordis.patch.yml" || pkg.scripts) {
+  if (pkg.name !== id.bridgeName || pkg.version !== release.version || pkg.private !== true
+    || pkg.license !== "MIT" || pkg.repository?.url !== `https://github.com/${id.repository}.git` || pkg.scripts
+    || (id.dsh ? (pkg.main !== "index.mjs" || pkg.type !== "module"
+      || JSON.stringify(pkg.dependencies) !== JSON.stringify({ [id.packageName]: "latest" })
+      || pkg.dsh?.bundle?.patch !== "./cordis.patch.yml") : (pkg.main || pkg.dependencies || pkg.dsh))) {
     throw new Error("Invalid public bridge package identity or dependency policy");
   }
   return manifest.files.map((item) => item.path);
@@ -65,12 +70,12 @@ function readBridge(root, release) {
 
 // Only generated public paths are replaced. Release control files and unrelated
 // repository content belong to other steps; never recursively clear a checkout.
-function copyBridge(source, destination, names, tracked = []) {
-  for (const name of tracked.filter((name) => isBridgePath(name) && !names.includes(name))) {
+function copyBridge(source, destination, names, tracked = [], variant = "fnos") {
+  for (const name of tracked.filter((name) => isBridgePath(name, variant) && !names.includes(name))) {
     fs.unlinkSync(regularFile(destination, name));
   }
   for (const name of names) {
-    if (!isBridgePath(name)) throw new Error(`Invalid public bridge path: ${name}`);
+    if (!isBridgePath(name, variant)) throw new Error(`Invalid public bridge path: ${name}`);
     const target = path.join(destination, name);
     let parent = destination;
     for (const part of name.split("/").slice(0, -1)) {

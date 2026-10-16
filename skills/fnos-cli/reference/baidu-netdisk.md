@@ -53,7 +53,7 @@ fnos-cli baidu-netdisk status
 
 返回数据包括：
 
-| Field | Type | Meaning |
+| 字段 | 类型 | 含义 |
 | --- | --- | --- |
 | `authorized` | boolean | 三段授权状态请求均成功时为 `true` |
 | `authorizationPath` | string | NAS 应用授权入口路径 |
@@ -78,13 +78,13 @@ fnos-cli baidu-netdisk quota
 fnos-cli baidu-netdisk ls [dir] [--order name|size|time|ctime|path] [--ascending] [--page N] [--limit N]
 ```
 
-| Option | Required | Default | Meaning |
+| 选项 | 必填 | 默认值 | 含义 |
 | --- | --- | --- | --- |
-| `dir` | no | `/` | 百度网盘目录 |
-| `--order` | no | `time` | 排序字段 |
-| `--ascending` | no | false | 升序；缺省为降序 |
-| `--page` | no | `1` | 页码，从 1 开始 |
-| `--limit` | no | `80` | 每页数量，范围 1 到 1000 |
+| `dir` | 否 | `/` | 百度网盘目录 |
+| `--order` | 否 | `time` | 排序字段 |
+| `--ascending` | 否 | false | 升序；缺省为降序 |
+| `--page` | 否 | `1` | 页码，从 1 开始 |
+| `--limit` | 否 | `80` | 每页数量，范围 1 到 1000 |
 
 文件条目常见字段：`fs_id`、`path`、`server_filename`、`isdir`、`category`、`size`、`server_mtime`、`server_ctime`、`thumbs`。
 
@@ -114,12 +114,12 @@ fnos-cli baidu-netdisk move <path...> <destDir> [--ondup fail|newcopy|overwrite|
 fnos-cli baidu-netdisk copy <path...> <destDir> [--ondup fail|newcopy|overwrite|skip] --yes
 ```
 
-| Field | Location | Meaning | Constraints |
+| 字段 | 位置 | 含义 | 约束 |
 | --- | --- | --- | --- |
-| `path` | positional | 源文件或目录 | 绝对网盘路径，不允许 `.` / `..` 段 |
-| `newName` | positional | 新名称 | 单个名称，不能包含 `/` 或 `\\` |
-| `destDir` | final positional | 目标目录 | `move/copy` 的最后一个参数 |
-| `--ondup` | option | 重名策略 | `fail` 失败、`newcopy` 保留副本、`overwrite` 覆盖、`skip` 跳过 |
+| `path` | 位置参数 | 源文件或目录 | 绝对网盘路径，不允许 `.` / `..` 段 |
+| `newName` | 位置参数 | 新名称 | 单个名称，不能包含 `/` 或 `\\` |
+| `destDir` | 最后一个位置参数 | 目标目录 | `move/copy` 的最后一个参数 |
+| `--ondup` | 选项 | 重名策略 | `fail` 失败、`newcopy` 保留副本、`overwrite` 覆盖、`skip` 跳过 |
 
 文件管理响应可能包含 `taskid` 和逐项 `info[]`；即使顶层 `errno=0`，也应检查逐项 `info[].errno`。
 
@@ -132,13 +132,13 @@ fnos-cli baidu-netdisk upload <targetPath> <localPath...> [--conflict fail|renam
 fnos-cli baidu-netdisk download <targetPath> <fsid...> [--conflict fail|rename|overwrite] --yes
 ```
 
-| Field | Command | Meaning | Constraints |
+| 字段 | 命令 | 含义 | 约束 |
 | --- | --- | --- | --- |
 | `targetPath` | upload | 百度网盘目标目录 | `/` 开头的网盘路径 |
 | `localPath` | upload | NAS 源路径 | 一个或多个 `/vol{n}/...` 路径 |
 | `targetPath` | download | NAS 目标目录 | 具体 `/vol{n}/...` 路径 |
 | `fsid` | download | 百度文件 ID | 一个或多个正整数 |
-| `--conflict` | both | 冲突策略 | `fail=0`、`rename=1`、`overwrite=3` |
+| `--conflict` | 两者 | 冲突策略 | `fail=0`、`rename=1`、`overwrite=3` |
 
 `uploadToCloud` 成功响应按应用合约返回 `data: null`。CLI 会输出结构化的任务提交确认，
 包括 `accepted: true`、`status: "submitted"`、目标路径、NAS 源路径、冲突策略和后端消息，
@@ -199,7 +199,7 @@ fnos-cli baidu-netdisk sync update <id> --status running|paused --interval 1m|10
 fnos-cli baidu-netdisk sync start|pause|delete <id> --yes
 ```
 
-| Field | API value | Meaning |
+| 字段 | API 值 | 含义 |
 | --- | --- | --- |
 | `direction=download` | `1` | 百度网盘同步到 NAS |
 | `direction=upload` | `2` | NAS 同步到百度网盘 |

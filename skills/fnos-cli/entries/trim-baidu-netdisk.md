@@ -1,31 +1,25 @@
 ---
 name: trim-baidu-netdisk
-description: Check Baidu Netdisk authorization, quota, cloud files, saved shares, NAS transfers and scheduled synchronization.
+description: 检查百度网盘授权、容量、云端文件、分享保存、NAS 传输和定时同步。
 ---
 
-# Baidu Netdisk
+# 百度网盘
 
-Use for cloud file browsing/search/metadata, file changes, saving shares to NAS,
-upload/download tasks, and scheduled sync. Read `../reference/baidu-netdisk.md`
-for full commands, fields and errors; `trim-shared.md` covers fnOS profiles.
+用于云文件浏览/搜索/元数据、文件变更、分享保存到 NAS、上传下载任务和定时同步。完整命令、字段和错误见 `../reference/baidu-netdisk.md`；fnOS profile 说明见 `trim-shared.md`。
 
-## Rules
+## 规则
 
-- Run `baidu-netdisk status` first. If unauthorized, the user completes authorization
-  in the NAS Baidu Netdisk app. The CLI does not perform Baidu OAuth.
-- Cloud paths start with `/`; NAS paths are concrete `/vol{n}/...` paths. Keep them distinct.
-- File, transfer and sync changes require explicit `--yes`.
-- Successful `upload` means task submission only; `data: null` is normal. Check
-  `task list --state running`, then `--state completed` for the final result.
-- `status=6`, `failCode=42610` means insufficient cloud space. Free or expand space before retrying.
-- `info --dlink` returns a sensitive temporary URL; CLI output redacts `dlink`.
-- The final `move` / `copy` argument is the destination directory; earlier arguments are sources.
-- Prefer `share-save --all`. To select known share IDs, repeat `--fsid` instead;
-  `--all` and `--fsid` are mutually exclusive.
-- Share extraction codes are detected automatically or supplied with `--password`.
-  Keep share shortcodes, extraction codes, `spwd` and intermediate task IDs out of replies and logs.
+- 先运行 `baidu-netdisk status`；未授权时由用户在 NAS 百度网盘应用中完成授权。CLI 不执行百度 OAuth。
+- 网盘路径以 `/` 开头；NAS 路径是具体 `/vol{n}/...` 路径，两者不可混用。
+- 文件、传输和同步变更必须显式传入 `--yes`。
+- `upload` 成功只表示任务提交，`data: null` 属正常情况。先查看 `task list --state running`，再用 `--state completed` 确认最终结果。
+- `status=6`、`failCode=42610` 表示网盘空间不足；释放或扩展空间后再重试。
+- `info --dlink` 返回敏感临时 URL；CLI 输出会对 `dlink` 脱敏。
+- `move` / `copy` 最后一个参数是目标目录，其余参数是源路径。
+- 优先使用 `share-save --all`。若精确选择已知分享 ID，则重复传入 `--fsid`；`--all` 和 `--fsid` 互斥。
+- 自动识别分享提取码，也可用 `--password` 提供。分享短码、提取码、`spwd` 和中间任务 ID 不得出现在回复或日志中。
 
-## Commands
+## 命令
 
 ```bash
 fnos-cli baidu-netdisk status

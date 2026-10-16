@@ -11,30 +11,30 @@
 
 ## appcgi.network.ssh.switch
 
-### Endpoint
+### 端点
 
 `appcgi.network.ssh.switch`
 
-### Purpose
+### 用途
 
 开启或关闭设备 SSH 服务。
 
-### Trim CLI Mapping
+### CLI 映射
 
 ```bash
 fnos-cli network ssh switch --enable [--yes]
 fnos-cli network ssh switch --disable [--yes]
 ```
 
-### Request
+### 请求
 
-| Field | Location | Required | Type | Meaning | Constraints / Notes | Example |
+| 字段 | 位置 | 必填 | 类型 | 含义 | 约束 / 说明 | 示例 |
 | --- | --- | --- | --- | --- | --- | --- |
-| `req` | body | yes | string | Endpoint selector | 固定值 | `appcgi.network.ssh.switch` |
-| `reqid` | body | yes | string | Request correlation ID | 每次请求生成 | `69ba...` |
-| `enable` | body | yes | boolean | 是否开启 SSH | `true` 开启，`false` 关闭 | `true` |
+| `req` | 请求体 | 是 | 字符串 | 端点选择器 | 固定值 | `appcgi.network.ssh.switch` |
+| `reqid` | 请求体 | 是 | 字符串 | 请求关联 ID | 每次请求生成 | `69ba...` |
+| `enable` | 请求体 | 是 | 布尔值 | 是否开启 SSH | `true` 开启，`false` 关闭 | `true` |
 
-### Notes
+### 说明
 
 - `--enable` 与 `--disable` 必须二选一。
 - 开启 SSH 是安全敏感操作，默认需要确认；用户明确授权后才使用 `--yes`。

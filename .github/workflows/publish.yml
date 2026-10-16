@@ -1,34 +1,24 @@
-name: Publish fnOS CLI
-run-name: fnOS ${{ github.ref_name }} (publish=${{ inputs.publish }})
-
+name: Publish CLI
+run-name: ${{ github.repository }} ${{ github.ref_name }} (publish=${{ inputs.publish }})
 on:
   workflow_dispatch:
     inputs:
       publish:
-        description: Publish to npm and finalize the GitHub Release
+        description: Publish the exact validated candidate (requires product environment approval)
         type: boolean
         default: false
-        required: true
-
 permissions:
   contents: read
-
-# Serialize every version so an older run cannot move npm latest backwards.
 concurrency:
-  group: fnos-npm-release
+  group: npm-release-${{ github.repository }}
   cancel-in-progress: false
-
 jobs:
   verify:
-    if: startsWith(github.ref, 'refs/tags/v')
-    # GitHub only exposes draft releases to callers with push access.
+    # Restore pre-existing draft visibility: GitHub requires push access for drafts.
     permissions:
       contents: write
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,25 +26,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          registry-url: https://registry.npmjs.org
-      - name: Download immutable release assets
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release download "$env:GITHUB_REF_NAME" --repo "$env:GITHUB_REPOSITORY" --dir artifacts
-        if: runner.os == 'Windows'
-      - name: Download immutable release assets
+      - name: Download immutable candidate assets
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --dir artifacts
-        if: runner.os != 'Windows'
-      - name: Verify hashes, package metadata, native CLI and Skill installation
-        run: node scripts/release.cjs smoke
-
+      - name: Verify product, source, hashes and GitLab three-platform evidence
+        run: node scripts/release.cjs verify
   publish:
     needs: verify
     if: inputs.publish
     runs-on: ubuntu-latest
-    environment: npm-production
+    environment:
+      name: ${{ github.repository == 'fnnas-labs/fnos-cli-skill' && 'npm-production' || 'npm-fygo' }}
     permissions:
       contents: write
       id-token: write
@@ -65,17 +48,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          registry-url: https://registry.npmjs.org
-      - name: Install npm with Trusted Publishing support
-        run: npm install --global npm@11 --ignore-scripts --no-audit --no-fund
-      - name: Download release assets
+      - run: npm install --global npm@11
+      - name: Download immutable candidate assets
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --dir artifacts
-      - name: Verify and publish the exact tarball with OIDC
+      - name: Publish and persist npm acceptance
         env:
           GH_TOKEN: ${{ github.token }}
-          NPM_CONFIG_PROVENANCE: ${{ github.event.repository.private && 'false' || 'true' }}
+          NPM_CONFIG_PROVENANCE: ${{ github.event.repository.private == false && 'true' || 'false' }}
         run: node scripts/release.cjs publish
       - name: Complete GitHub Release
         env:

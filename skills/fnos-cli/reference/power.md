@@ -1,15 +1,15 @@
-# Power Reference
+# 电源参考
 
 电源模块用于重启或关闭 NAS。两条命令都会中断当前设备服务和 CLI 连接，执行前必须确认目标地址、当前账号权限和业务影响。
 
-## Commands
+## 命令
 
-| Command | Endpoint | Effect |
+| 命令 | 端点 | 效果 |
 | --- | --- | --- |
 | `fnos-cli power reboot --yes` | `power.reboot` | 请求重启 NAS |
 | `fnos-cli power poweroff --yes` | `power.poweroff` | 请求关闭 NAS |
 
-## Confirmation
+## 确认
 
 默认会弹出交互确认。自动化场景或已经确认目标设备时传 `--yes` 跳过提示。
 
@@ -18,11 +18,11 @@ fnos-cli --host <host> --port <port> power reboot --yes
 fnos-cli --host <host> --port <port> power poweroff --yes
 ```
 
-## Session Requirements
+## 会话要求
 
 执行前需要已经登录并保存 session。CLI 会使用保存的 session 完成签名认证后发送电源请求。
 
-## Output
+## 输出
 
 命令成功发送并被后端接受后输出简短成功信息：
 

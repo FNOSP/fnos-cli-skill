@@ -1,41 +1,33 @@
 ---
 name: trim-user
-description: Inspect users, groups, signed-in devices and current permissions, manage users, or choose the correct authenticated profile.
+description: 查看用户、组、登录设备和当前权限，管理用户，或选择正确的已授权 profile。
 ---
 
-# Users and permissions
+# 用户与权限
 
-Read `../reference/user.md` and `../reference/workflows/device-validation.md`.
+阅读 `../reference/user.md` 和 `../reference/workflows/device-validation.md`。
 
-## Rules
+## 使用规则
 
-- Most device operations require a signed-in session.
-- Device validation uses only the current profile's OAuth session. Select a
-  different profile explicitly when switching identities.
-- OAuth PKCE login leaves credentials and 2FA to the user; never construct
-  password, 2FA or manual access-token login commands.
-- When authorization is needed, read `../reference/oauth.md`. The Agent generates
-  a link with `login --authorize-only`; the user authorizes in the browser and
-  sends the one-time code back; the Agent exchanges it with `login --code` in the
-  same environment, profile and connection options. Verify token persistence and
-  a read-only request before continuing. The user needs no terminal; ordinary
-  interactive `login` remains available when the user explicitly chooses it.
-- Unwrapped `user.*` endpoints use `user request`. User and signed-in-device
-  writes require confirmation by default; Agent writes explicitly pass `--yes`.
+- 大多数设备操作需要已登录会话。
+- 设备验收只使用当前 profile 的 OAuth 会话；切换身份时明确选择另一 profile。
+- OAuth PKCE 登录把凭据和 2FA 留给用户，不能构造密码、2FA 或手工 access token 登录命令。
+- 需要授权时先阅读 `../reference/oauth.md`。Agent 使用 `login --authorize-only` 生成链接，用户在浏览器授权并回传一次性 code，再由 Agent 在同一环境、profile 和连接参数下执行 `login --code`。确认 token 持久化并完成只读请求后再继续。用户无需终端；只有用户明确选择时才使用交互式 `login`。
+- 未封装的 `user.*` 端点使用 `user request`。用户及登录设备写操作默认需要确认，Agent 写操作明确传入 `--yes`。
 
-## Commands
+## 授权步骤
 
 ```bash
 fnos-cli --profile home --host <host> --port <port> login --authorize-only
 ```
 
-After the user sends the code, follow the OAuth guide to complete authorization:
+用户回传 code 后，按 OAuth 指引完成授权：
 
 ```bash
 fnos-cli --profile home --host <host> --port <port> login --code '<code>'
 ```
 
-Other user commands (not login steps):
+以下是用户管理命令，不是登录步骤：
 
 ```bash
 fnos-cli logout

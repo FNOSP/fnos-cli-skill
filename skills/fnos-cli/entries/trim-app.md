@@ -1,48 +1,32 @@
 ---
 name: trim-app
-description: Manage installed applications, App Center installation, FPK packages, updates, application entries and lifecycle operations.
+description: 管理已安装应用、应用中心安装、FPK 软件包、更新、应用入口与生命周期操作。
 ---
 
-# App Center
+# 应用中心
 
-Manage fnOS apps: list, inspect, install, install FPKs, update, start,
-stop and uninstall. See `../reference/app-center.md` for endpoints and fields;
-use `trim-shared.md` for connection or session failures.
+管理 fnOS 应用：列出、查看、安装、安装 FPK、更新、启动、停止和卸载。
+端点及字段见 `../reference/app-center.md`；连接或会话故障见 `trim-shared.md`。
 
-## Rules
+## 规则
 
-- Writes, including installation, updates and lifecycle changes, require explicit `--yes`.
-- Only flows without UI decisions run automatically. License approval requires
-  `--accept-license`; dependency changes and running dependent apps require App
-  Center UI. Supply explicit `--custom-parameters` for custom wizard input.
-- `app install` / `app update` create and poll a download task, then start and
-  wait for the installation/update task. `--dry-run` only downloads/parses the
-  package, reads info and runs safety guards; it does not start installation.
-- Preflight local FPKs with `app install-fpk <file> --volume-id <id> --dry-run --yes`.
-  This uploads/parses the FPK and checks guards without installing it.
-- NAS FPKs use `--remote-path /vol.../demo.fpk`: a concrete NAS FPK path, at most 10GB.
-- Upload error `20001` means unavailable storage; check that `--volume-id` exists,
-  is mounted and healthy.
-- Supply `--source-id` for a new app when known; updates resolve `sourceID` from
-  the installed list.
-- Prefer explicit `--volume-id`. Otherwise the CLI uses App Center's default
-  download/install volume, and refuses when no usable default exists.
-- `--custom-parameters '<jsonArray>'` maps to `customParameters`;
-  `--api-scope '<jsonObject>'` maps to `systemParameters.apiScope`. Missing required
-  custom wizard input stops the command and directs the user to App Center UI.
-- `--cancel-on-failure` attempts the matching cancel endpoint on task failure and
-  includes its result in the error.
-- `app openapi ...` manages application user authorization paths; additions need
-  `--yes` and concrete `/vol...` paths.
-- `app entry list`, `app desktop list` and `app sac app-store-list` use
-  `appcgi.sac.entry.v1.*` WebSocket CGI, not legacy entry REST.
-- Desktop entry writes without named commands use `raw` with explicit `--yes`.
-- `app config set-sys` rejects invalid default volumes, update windows, cloud
-  policies and boolean settings before sending. `autoCreateDesktopIcon` is sent
-  only with `--allow-desktop-icon-field` after backend compatibility is confirmed.
-- Apps start after installation by default; use `--no-start` to leave them stopped.
+- 安装、更新和生命周期变更等写操作必须显式传入 `--yes`。
+- 只有无需界面决策的流程才能自动执行。许可确认需要 `--accept-license`；依赖变更和运行中的依赖应用必须在应用中心界面处理。自定义向导输入须显式提供 `--custom-parameters`。
+- `app install` / `app update` 创建并轮询下载任务，再启动并等待安装或更新任务。`--dry-run` 只下载/解析软件包、读取信息并执行安全检查，不启动安装。
+- 本地 FPK 先使用 `app install-fpk <file> --volume-id <id> --dry-run --yes` 预检；这会上传并解析 FPK、检查约束，但不安装。
+- NAS 上的 FPK 使用 `--remote-path /vol.../demo.fpk`，必须是具体 NAS FPK 路径，最大 10GB。
+- 上传错误 `20001` 表示存储不可用；检查 `--volume-id` 对应卷是否存在、已挂载且健康。
+- 新应用已知来源时提供 `--source-id`；更新从已安装列表解析 `sourceID`。
+- 优先显式指定 `--volume-id`；否则 CLI 使用应用中心默认下载/安装卷，没有可用默认卷时拒绝执行。
+- `--custom-parameters '<jsonArray>'` 映射到 `customParameters`；`--api-scope '<jsonObject>'` 映射到 `systemParameters.apiScope`。缺少必需自定义向导输入时停止并提示用户使用应用中心界面。
+- `--cancel-on-failure` 在任务失败时尝试对应取消端点，并在错误中包含取消结果。
+- `app openapi ...` 管理应用用户授权路径；新增需要 `--yes` 和具体 `/vol...` 路径。
+- `app entry list`、`app desktop list` 和 `app sac app-store-list` 使用 `appcgi.sac.entry.v1.*` WebSocket CGI，不使用旧入口 REST。
+- 没有固定命令的桌面入口写操作使用 `raw`，并显式传入 `--yes`。
+- `app config set-sys` 在发送前拒绝无效默认卷、更新时间窗口、云策略和布尔设置。只有确认后端兼容并传入 `--allow-desktop-icon-field` 后才发送 `autoCreateDesktopIcon`。
+- 应用默认在安装后启动；使用 `--no-start` 保持停止状态。
 
-## Commands
+## 命令
 
 ```bash
 fnos-cli --host <host> --port <port> app list
