@@ -4,18 +4,18 @@
   "packageName": "@fnnas-labs/fnos-cli",
   "commandName": "fnos-cli",
   "repository": "fnnas-labs/fnos-cli-skill",
-  "version": "0.3.2",
-  "tag": "v0.3.2",
-  "sourceCommit": "cb9c3db37abd17d40265d89248590d42b82e3e53",
-  "bridgeManifestSha256": "8e9ee552725add63dc1a81c6dfaadac9035bcc8b3eb2f91dd0860797e22cbdfb",
+  "version": "0.3.3",
+  "tag": "v0.3.3",
+  "sourceCommit": "b5c8e22346144d462df7804d178b0a2b9365a0c0",
+  "bridgeManifestSha256": "7b6323d76f25ae45fdeb8e6f6bfaa7c2a92e70fa224054698bdd6cd48e5e69ff",
   "assets": [
     {
-      "name": "fnnas-labs-fnos-cli-0.3.2.tgz",
-      "sha256": "751b7169154424f01984d2041b38d24c2dc82212d358d71a4de2c4b484b795a8"
+      "name": "fnnas-labs-fnos-cli-0.3.3.tgz",
+      "sha256": "aa46051b20ee2ea611131d3ea3833093698e198b76a70f4690fa82f7c858f128"
     },
     {
       "name": "fnos-skill.zip",
-      "sha256": "47318442c59728e171b303d2ac52c08bf987da9b6e47c05231b632139b286342"
+      "sha256": "6bcad0a1eb41778c57e016b0ad207574cbd57e8895515815c2ab69363e6b11be"
     }
   ]
 }
