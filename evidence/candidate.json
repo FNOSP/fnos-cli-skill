@@ -6,20 +6,20 @@
   "skillName": "fnos-cli",
   "locale": "zh-CN",
   "repository": "fnnas-labs/fnos-cli-skill",
-  "version": "0.4.0",
-  "sourceCommit": "0a474862e0fb290407183efea73f4f21259f2857",
-  "sourceSha256": "85d47e4e65950ec47e5b37585cd5ca949629183890b5052d067d03ce216c19bc",
-  "sourceTag": "v0.4.0",
+  "version": "0.4.1",
+  "sourceCommit": "38e09360612985e47ccd590a5c0fa2fc5ccd9e22",
+  "sourceSha256": "da32260c74a2318367e105f75c755de92f8e6cb22c3dee1300ac32c5bc3f2bfd",
+  "sourceTag": "v0.4.1",
   "mode": "tagged",
   "publication": "not published; downstream acceptance and publication gates still required",
   "assets": [
     {
-      "name": "fnnas-labs-fnos-cli-0.4.0.tgz",
-      "sha256": "32fedfaa14aa9449a1c1459d9b6e398b248bacc860dfbc4a911886bc9950fa72"
+      "name": "fnnas-labs-fnos-cli-0.4.1.tgz",
+      "sha256": "7c11200722182248096c374c8751e0daff92887848d3def713b3c3bc4f051f4b"
     },
     {
       "name": "fnos-skill.zip",
-      "sha256": "bcf9e3b65bb98e7a9fe6b590f5b9b101393656c858c5d06d8b427f7e3e7d708a"
+      "sha256": "705488cfee33486c679f3a42e63851c17036d83e31658a3173d7a46c58a6d35f"
     }
   ],
   "publicFiles": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "THIRD_PARTY_NOTICES.txt",
-      "sha256": "0a5c6fb8c7d824b6b3dfc683b96f0e28a39bd493ec29512f52461fc583caf76c"
+      "sha256": "6560c5a1462530ce63d24b9aec26706679b1ecf6433823cb6cde25295fe30a37"
     },
     {
       "name": "skills/fnos-cli/LICENSE",
@@ -41,11 +41,11 @@
     },
     {
       "name": "skills/fnos-cli/SKILL.md",
-      "sha256": "2380696ee1fe8de6b29a92273f4f3bf23f538a2901d39c6b4d45c4c505b28900"
+      "sha256": "daf8794b960f74af24c3893e5f345e7a89bedc5f4c21054fd0648e1f48d30813"
     },
     {
       "name": "skills/fnos-cli/THIRD_PARTY_NOTICES.txt",
-      "sha256": "0a5c6fb8c7d824b6b3dfc683b96f0e28a39bd493ec29512f52461fc583caf76c"
+      "sha256": "6560c5a1462530ce63d24b9aec26706679b1ecf6433823cb6cde25295fe30a37"
     },
     {
       "name": "skills/fnos-cli/entries/trim-app.md",
@@ -184,5 +184,5 @@
       "sha256": "144a2de411e3cb88f031dc2a5c15d1c735eb866bdf551cb98db8290e7f6eb66c"
     }
   ],
-  "reportSha256": "ee26a18922f1507d83147189eee2b11ebc7b3f5f5e12d98beff82f4668a4b3c0"
+  "reportSha256": "4dc4518899a6d15b7813d0afe26cd859ae8773903ac81f1b30f75c1f2c33bb53"
 }

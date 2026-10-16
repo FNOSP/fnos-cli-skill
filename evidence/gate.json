@@ -4,45 +4,45 @@
   "result": "PASS",
   "variant": "fnos",
   "candidate": {
-    "sha256": "c7027933f66a747ead968e106e363437c7b983f0758a516e12e38ab4b78a8598",
+    "sha256": "5d1110303b74c797d40db0dac90594c39dcc70b33a93f3eb4eaa71b098074938",
     "variant": "fnos",
     "packageName": "@fnnas-labs/fnos-cli",
     "commandName": "fnos-cli",
     "skillName": "fnos-cli",
     "locale": "zh-CN",
     "repository": "fnnas-labs/fnos-cli-skill",
-    "version": "0.4.0",
-    "sourceCommit": "0a474862e0fb290407183efea73f4f21259f2857",
-    "sourceSha256": "85d47e4e65950ec47e5b37585cd5ca949629183890b5052d067d03ce216c19bc",
+    "version": "0.4.1",
+    "sourceCommit": "38e09360612985e47ccd590a5c0fa2fc5ccd9e22",
+    "sourceSha256": "da32260c74a2318367e105f75c755de92f8e6cb22c3dee1300ac32c5bc3f2bfd",
     "mode": "tagged",
-    "sourceTag": "v0.4.0",
+    "sourceTag": "v0.4.1",
     "assets": [
       {
-        "name": "fnnas-labs-fnos-cli-0.4.0.tgz",
-        "sha256": "32fedfaa14aa9449a1c1459d9b6e398b248bacc860dfbc4a911886bc9950fa72"
+        "name": "fnnas-labs-fnos-cli-0.4.1.tgz",
+        "sha256": "7c11200722182248096c374c8751e0daff92887848d3def713b3c3bc4f051f4b"
       },
       {
         "name": "fnos-skill.zip",
-        "sha256": "bcf9e3b65bb98e7a9fe6b590f5b9b101393656c858c5d06d8b427f7e3e7d708a"
+        "sha256": "705488cfee33486c679f3a42e63851c17036d83e31658a3173d7a46c58a6d35f"
       }
     ]
   },
   "reports": [
     {
       "name": "darwin.json",
-      "sha256": "1b7e0b4189ea54fa546e7c261bec6a37d843ba4605ff3a34fa6fd71b3ef1b3cd",
+      "sha256": "372344552544190abf7c91dad481fb953635cf8ca8f1cdf92ba18056dfbc5de0",
       "platform": "darwin",
       "arch": "arm64"
     },
     {
       "name": "linux.json",
-      "sha256": "ccd55426740b592442ab4779f3263c57123019c4c7b67363f23220ba5f9cb962",
+      "sha256": "5b4f80b0f3c012a146be9c99eaf9495f88ebdcd9ecefec930579c61616e61f58",
       "platform": "linux",
       "arch": "x64"
     },
     {
       "name": "win32.json",
-      "sha256": "1bc5392fd3cca5bd859c09f6c3fd145018ac3f4c88cb1cfe98fe381e913c5a4a",
+      "sha256": "b7784313a9e82d754274e59a21f0d98300513d2601ca11c11c88b51a0ebc6668",
       "platform": "win32",
       "arch": "x64"
     }

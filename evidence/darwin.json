@@ -2,28 +2,28 @@
   "schema": 1,
   "kind": "installed-cli-smoke",
   "result": "PASS",
-  "checkedAt": "2026-10-16T12:49:24.437Z",
+  "checkedAt": "2026-10-16T14:09:48.725Z",
   "candidate": {
-    "sha256": "c7027933f66a747ead968e106e363437c7b983f0758a516e12e38ab4b78a8598",
+    "sha256": "5d1110303b74c797d40db0dac90594c39dcc70b33a93f3eb4eaa71b098074938",
     "variant": "fnos",
     "packageName": "@fnnas-labs/fnos-cli",
     "commandName": "fnos-cli",
     "skillName": "fnos-cli",
     "locale": "zh-CN",
     "repository": "fnnas-labs/fnos-cli-skill",
-    "version": "0.4.0",
-    "sourceCommit": "0a474862e0fb290407183efea73f4f21259f2857",
-    "sourceSha256": "85d47e4e65950ec47e5b37585cd5ca949629183890b5052d067d03ce216c19bc",
+    "version": "0.4.1",
+    "sourceCommit": "38e09360612985e47ccd590a5c0fa2fc5ccd9e22",
+    "sourceSha256": "da32260c74a2318367e105f75c755de92f8e6cb22c3dee1300ac32c5bc3f2bfd",
     "mode": "tagged",
-    "sourceTag": "v0.4.0",
+    "sourceTag": "v0.4.1",
     "assets": [
       {
-        "name": "fnnas-labs-fnos-cli-0.4.0.tgz",
-        "sha256": "32fedfaa14aa9449a1c1459d9b6e398b248bacc860dfbc4a911886bc9950fa72"
+        "name": "fnnas-labs-fnos-cli-0.4.1.tgz",
+        "sha256": "7c11200722182248096c374c8751e0daff92887848d3def713b3c3bc4f051f4b"
       },
       {
         "name": "fnos-skill.zip",
-        "sha256": "bcf9e3b65bb98e7a9fe6b590f5b9b101393656c858c5d06d8b427f7e3e7d708a"
+        "sha256": "705488cfee33486c679f3a42e63851c17036d83e31658a3173d7a46c58a6d35f"
       }
     ]
   },
@@ -41,11 +41,11 @@
     }
   },
   "ci": {
-    "pipelineId": "11036",
-    "jobId": "34383",
+    "pipelineId": "11039",
+    "jobId": "34401",
     "runnerId": "46",
     "runnerArchitecture": "darwin/arm64",
-    "commit": "0a474862e0fb290407183efea73f4f21259f2857"
+    "commit": "38e09360612985e47ccd590a5c0fa2fc5ccd9e22"
   },
   "checks": [
     "installed-shim-version",

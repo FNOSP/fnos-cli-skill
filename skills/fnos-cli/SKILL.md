@@ -1,6 +1,6 @@
 ---
 name: fnos-cli
-description: 使用 fnos-cli 授权并管理 fnOS 设备的文件、照片、应用、Docker、下载、日志、监控、网络、存储、用户和百度网盘。用户提到 fnOS、飞牛系统或国内版设备时使用；不适用于国际版设备或 Media API。
+description: "使用 fnos-cli 授权并管理 fnOS 设备的文件、照片、应用、Docker、下载、日志、监控、网络、存储、用户和百度网盘。用户提到 fnOS、飞牛系统或国内版设备时使用；不适用于国际版设备或 Media API。"
 ---
 
 # fnOS
