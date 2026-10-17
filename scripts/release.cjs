@@ -2,7 +2,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { spawnSync } = require("node:child_process");
-const { regularFile, readBridge } = require("./bridge.cjs");
+const { regularFile, readBridgeManifest } = require("./bridge.cjs");
+const {query: npmQuery} = require("./npm-query.cjs");
 const { product, assetNames } = require("./products.cjs");
 
 function hash(file, algorithm = "sha256", encoding = "hex") {
@@ -31,7 +32,7 @@ function readRelease(root) {
 
 function verifyAssets(root, assetDirectory) {
   const release = readRelease(root);
-  readBridge(root, release);
+  readBridgeManifest(root, release);
   const names = ["candidate.json", "gate.json", "darwin.json", "linux.json", "win32.json"];
   if (!release.evidenceSha256 || Object.keys(release.evidenceSha256).length !== names.length) throw new Error("Missing release evidence hashes");
   for (const name of names) {
@@ -85,7 +86,7 @@ function registryState(result, release, integrity) {
 function smoke(root, directory) {
   const release = verifyAssets(root, directory);
   const id = product(release.variant);
-  const tgz = path.join(directory, release.assets.find((asset) => asset.name.endsWith(".tgz")).name);
+  const tgz = path.join(directory, release.assets.find((asset) => asset.name === assetNames(product(release.variant), release.version)[0]).name);
   const destination = path.join(root, ".tmp", "smoke");
   fs.mkdirSync(destination, { recursive: true });
   const npmArgs = ["install", "--prefix", destination, "--ignore-scripts", "--no-audit", "--no-fund", tgz];
@@ -105,20 +106,120 @@ function smoke(root, directory) {
   }
   const runtime = require(path.join(installed, "npm", "package-lib.cjs"));
   runtime.validatePackagedSkill(installed, { requireAllPlatforms: true });
-  const binary = runtime.resolvePackagedBinary(installed);
-  const nativeOptions = {env:{...process.env, TRIM_CLI_DISTRIBUTION:release.variant}};
-  for (const command of [[process.execPath, [path.join(installed, "npm", "run.cjs")]], [binary, []]]) {
-    const [executable, prefix] = command;
-    const version = run(executable, [...prefix, "--version"], nativeOptions).trim();
-    if (version.split(/\r?\n/)[0] !== `${release.commandName} ${release.version}`) throw new Error(`Unexpected binary version: ${version}`);
-    if (!run(executable, [...prefix, "--help"], nativeOptions).includes(`Usage: ${release.commandName} `)) {
-      throw new Error("Incorrect command name in help output");
-    }
-  }
+  const home=path.join(destination,"user");
+  const nativeOptions={env:{...process.env,TRIM_CLI_DISTRIBUTION:release.variant,HOME:home,USERPROFILE:home,
+    XDG_CACHE_HOME:path.join(home,".cache"),LOCALAPPDATA:path.join(home,"AppData","Local")}};
+  const entry=path.join(installed,"npm","run.cjs");
+  const version=run(process.execPath,[entry,"--version"],nativeOptions).trim();
+  if(version.split(/\r?\n/)[0]!==`${release.commandName} ${release.version}`)throw new Error(`Unexpected binary version: ${version}`);
+  if(!run(process.execPath,[entry,"--help"],nativeOptions).includes(`Usage: ${release.commandName} `))throw new Error("Incorrect command name in help output");
   run(process.execPath, [path.join(installed, "npm", "run.cjs"), "install", "--skill-only", "--project"], { cwd: destination });
   if (!fs.existsSync(path.join(destination, ".agents", "skills", manifest.trimCliSkillName, "SKILL.md"))) {
     throw new Error("Project Skill installation failed");
   }
+}
+
+// These write-once phase receipts bind the complete candidate, not only a URL
+// or version. Native readiness and public Skill activation are distinct facts.
+function phaseIdentity(root, release) {
+  return { releaseSha256: hash(path.join(root, 'release.json')), repository: release.repository,
+    tag: release.tag, packageName: release.packageName, version: release.version,
+    sourceCommit: release.sourceCommit, bridgeManifestSha256: release.bridgeManifestSha256,
+    evidenceSha256: release.evidenceSha256, assets: release.assets };
+}
+function phaseReceipts(root, release, execute = run) {
+  const candidate = phaseIdentity(root, release);
+  const readyName = 'runtime-assets-ready.json';
+  const activationName = 'skill-activation-receipt.json';
+  const activationRef = `skills-${release.tag}`;
+  const ready = { schemaVersion: 1, kind: 'runtime-assets-ready', candidate };
+  const temporary = action => {
+    fs.mkdirSync(path.join(root, '.tmp'), {recursive:true});
+    const directory = fs.mkdtempSync(path.join(root, '.tmp', 'phase-receipt-'));
+    try { return action(directory); } finally { fs.rmSync(directory, {recursive:true,force:true}); }
+  };
+  function read(name) {
+    const metadata = JSON.parse(execute('gh', ['release','view',release.tag,'--repo',release.repository,'--json','assets']));
+    if (!Array.isArray(metadata.assets)) throw new Error('Invalid phase receipt listing');
+    const entries = metadata.assets.filter(asset => asset.name === name);
+    if (!entries.length) return null;
+    if (entries.length !== 1) throw new Error('Duplicate phase receipts');
+    return temporary(directory => {
+      const file = path.join(directory, name);
+      execute('gh',['release','download',release.tag,'--repo',release.repository,'--pattern',name,'--output',file]);
+      const value = JSON.parse(fs.readFileSync(file,'utf8'));
+      const expected = name === readyName ? ready : { schemaVersion:1, kind:'skill-activation', candidate,
+        activationRef, activationCommit:value.activationCommit };
+      if (JSON.stringify(value) !== JSON.stringify(expected)
+        || name === activationName && !/^[a-f0-9]{40}$/.test(value.activationCommit || '')) throw new Error('Phase receipt differs from immutable release identity');
+      return value;
+    });
+  }
+  function save(name, value) {
+    const previous = read(name);
+    if (previous) {
+      if (JSON.stringify(previous) !== JSON.stringify(value)) throw new Error('Phase receipt differs from immutable activation');
+      return previous;
+    }
+    return temporary(directory => {
+      const file=path.join(directory,name); fs.writeFileSync(file,JSON.stringify(value));
+      try { execute('gh',['release','upload',release.tag,file,'--repo',release.repository]); }
+      catch {
+        const reconciled=read(name);
+        if (!reconciled || JSON.stringify(reconciled)!==JSON.stringify(value)) throw new Error('Phase receipt upload failed; retry the same immutable candidate');
+      }
+      return value;
+    });
+  }
+  return {
+    ready: () => read(readyName), activation: () => read(activationName),
+    saveReady: () => save(readyName, ready),
+    saveActivation(commit) {
+      if (!read(readyName)) throw new Error('Missing native asset readiness receipt');
+      if (!/^[a-f0-9]{40}$/.test(commit)) throw new Error('Invalid activation commit');
+      return save(activationName, {schemaVersion:1,kind:'skill-activation',candidate,activationRef,activationCommit:commit});
+    },
+    requirePublished() {
+      if (!read(readyName)) throw new Error('Missing native asset readiness receipt');
+      const activated=read(activationName);
+      if (!activated) throw new Error('Missing public Skill activation receipt');
+      const ref=JSON.parse(execute('gh',['api',`repos/${release.repository}/git/ref/tags/${activationRef}`]));
+      if (ref.object?.type !== 'commit' || ref.object.sha !== activated.activationCommit) throw new Error('Public activation ref differs from its receipt');
+      const control=JSON.parse(execute('gh',['api',`repos/${release.repository}/git/ref/tags/${release.tag}`]));
+      if (control.object?.type !== 'commit' || !/^[a-f0-9]{40}$/.test(control.object.sha || '') || control.object.sha===activated.activationCommit) throw new Error('Public activation cannot be the release control snapshot');
+      return activated;
+    }
+  };
+}
+function readyNativeAssets(root, directory, release, execute = run) {
+  const native = release.assets.filter(asset => asset.name.endsWith('.gz'));
+  if (native.length !== 6) throw new Error('Native readiness requires all six fixed platform assets');
+  fs.mkdirSync(path.join(root,'.tmp'),{recursive:true});
+  const scratch=fs.mkdtempSync(path.join(root,'.tmp','anonymous-assets-'));
+  // curl does not consume GH_TOKEN, but remove credentials from its environment
+  // as well. -q disables user curlrc; requests never use netrc or auth options.
+  const env={...process.env};
+  for (const key of Object.keys(env)) if (/TOKEN|PASSWORD|SECRET|AUTH/i.test(key)) delete env[key];
+  try {
+    for (const asset of native) {
+      let url=new URL(`https://github.com/${release.repository}/releases/download/${release.tag}/${asset.name}`);
+      const output=path.join(scratch,asset.name), headers=path.join(scratch,'headers');
+      for (let redirects=0;;redirects++) {
+        if (url.protocol!=='https:' || url.username || url.password) throw new Error('Unsafe anonymous asset redirect');
+        const status=execute('curl',['-q','--fail','--silent','--show-error','--proto','=https','--proto-redir','=https',
+          '--connect-timeout','10','--max-time','120','--max-filesize',String(fs.statSync(path.join(directory,asset.name)).size),
+          '--output',output,'--dump-header',headers,'--write-out','%{http_code}',url.href],{env}).trim();
+        if (['301','302','303','307','308'].includes(status)) {
+          const locations=[...fs.readFileSync(headers,'utf8').matchAll(/^location:\s*(.+)\r?$/gim)];
+          if (redirects>=5 || !locations.length) throw new Error('Anonymous asset redirect limit exceeded');
+          url=new URL(locations.at(-1)[1].trim(),url); continue;
+        }
+        if (status!=='200' || hash(output)!==asset.sha256) throw new Error(`Anonymous native asset checksum/download mismatch: ${asset.name}`);
+        break;
+      }
+    }
+    return phaseReceipts(root, release, execute).saveReady();
+  } finally { fs.rmSync(scratch,{recursive:true,force:true}); }
 }
 
 // Persist acceptance independently of registry visibility so retries do not
@@ -203,8 +304,9 @@ function isNewerStableRelease(item, release) {
   return compared > 0n;
 }
 
-function completeRelease(root, directory, execute = run) {
+function completeRelease(root, directory, execute = run, phases) {
   const release = verifyAssets(root, directory);
+  (phases || phaseReceipts(root, release, execute)).requirePublished();
   const receipt = githubReceipt(root, release, execute);
   if (!receipt.exists()) throw new Error("Missing npm acceptance receipt");
   const newer = receipt.hasNewerPublication();
@@ -213,17 +315,18 @@ function completeRelease(root, directory, execute = run) {
   console.log(`Publication complete: ${release.packageName}@${release.version}; npm acceptance recorded and GitHub Release completed.`);
 }
 
-function publish(root, directory, runner = spawnSync, receipt) {
+function publish(root, directory, runner = spawnSync, receipt, phases) {
   const release = verifyAssets(root, directory);
+  (phases || phaseReceipts(root, release)).requirePublished();
   receipt ||= githubReceipt(root, release);
   if (receipt.exists()) {
     console.log("npm acceptance already recorded for these assets; skipping publication.");
     return;
   }
-  const tgz = path.join(directory, release.assets.find((asset) => asset.name.endsWith(".tgz")).name);
+  const tgz = path.join(directory, release.assets.find((asset) => asset.name === assetNames(product(release.variant), release.version)[0]).name);
   const integrity = `sha512-${hash(tgz, "sha512", "base64")}`;
   const attempted = receipt.attemptExists();
-  const lookup = runner("npm", ["view", `${release.packageName}@${release.version}`, "--json", "--registry=https://registry.npmjs.org"], { encoding: "utf8" });
+  const lookup = npmQuery(root,["view", `${release.packageName}@${release.version}`],runner);
   if (registryState(lookup, release, integrity) === "published") {
     receipt.save();
     console.log("Identical npm package already published; skipping publication.");
@@ -231,7 +334,7 @@ function publish(root, directory, runner = spawnSync, receipt) {
   }
   if (attempted) throw new Error("Uncertain previous publication: an immutable attempt exists without acceptance receipt; do not upload again while registry visibility is unresolved");
   const newerAccepted = receipt.hasNewerPublication();
-  const latest = runner("npm", ["view", release.packageName, "dist-tags.latest", "--json", "--registry=https://registry.npmjs.org"], { encoding: "utf8" });
+  const latest = npmQuery(root,["view", release.packageName, "dist-tags.latest"],runner);
   if (!latest.error && latest.status !== 0) {
     let failure;
     try { failure = JSON.parse(latest.stdout).error; } catch { /* Not a registry absence. */ }
@@ -246,7 +349,7 @@ function publish(root, directory, runner = spawnSync, receipt) {
   let publicationTag = "latest";
   if (compare < 0n || newerAccepted) {
     publicationTag = `release-v${release.version}`;
-    const tags = runner("npm", ["view", release.packageName, "dist-tags", "--json", "--registry=https://registry.npmjs.org"], {encoding:"utf8"});
+    const tags = npmQuery(root,["view", release.packageName, "dist-tags"],runner);
     if (tags.error || tags.status !== 0) throw new Error("Cannot verify npm dist-tags for historical catch-up");
     const existingTags = JSON.parse(tags.stdout);
     if (!existingTags || typeof existingTags !== "object" || Array.isArray(existingTags)
@@ -270,10 +373,10 @@ function registrySmoke(root, directory, runner = run, smokeCheck = smoke) {
   try {
     const result = JSON.parse(runner("npm", ["pack", `${release.packageName}@${release.version}`, "--json", "--ignore-scripts",
       "--pack-destination", scratch, "--cache", path.join(scratch, "cache"), "--registry=https://registry.npmjs.org"]));
-    const tgz = release.assets.find((asset) => asset.name.endsWith(".tgz"));
+    const tgz = release.assets.find((asset) => asset.name === assetNames(product(release.variant), release.version)[0]);
     if (!Array.isArray(result) || result.length !== 1 || result[0].filename !== tgz.name
       || hash(path.join(scratch, tgz.name)) !== tgz.sha256) throw new Error("Downloaded npm tarball differs from release assets");
-    fs.copyFileSync(path.join(directory, `${release.variant}-skill.zip`), path.join(scratch, `${release.variant}-skill.zip`));
+    for (const asset of release.assets.filter(asset => asset.name !== tgz.name)) fs.copyFileSync(path.join(directory, asset.name), path.join(scratch, asset.name));
     smokeCheck(root, scratch);
   } finally { fs.rmSync(scratch, { recursive: true, force: true }); }
 }
@@ -287,14 +390,15 @@ if (require.main === module) {
       throw new Error("Run publishing in the GitHub release-tag workflow");
     }
     if (action === "verify") verifyAssets(root, directory);
+    else if (action === "verify-ready") phaseReceipts(root, verifyAssets(root,directory)).requirePublished();
     else if (action === "smoke") smoke(root, directory);
     else if (action === "publish") publish(root, directory);
     else if (action === "complete") completeRelease(root, directory);
     else if (action === "registry-smoke") registrySmoke(root, directory);
-    else throw new Error("Usage: release.cjs verify|smoke|publish|complete|registry-smoke");
+    else throw new Error("Usage: release.cjs verify|verify-ready|smoke|publish|complete|registry-smoke");
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;
   }
 }
-module.exports = { hash, readRelease, verifyAssets, registryState, publish, smoke, registrySmoke, githubReceipt, completeRelease };
+module.exports = { phaseReceipts, readyNativeAssets, phaseIdentity, hash, readRelease, verifyAssets, registryState, publish, smoke, registrySmoke, githubReceipt, completeRelease };

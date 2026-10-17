@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.4.1",
+  "version": "0.5.0",
   "files": [
     {
       "path": ".gitignore",
@@ -20,15 +20,15 @@
     },
     {
       "path": "npm/dsh.mjs",
-      "sha256": "4fb3568fa73bb13579edd0bf0619ba8e36002440c1f35d7496bc02d8fdfb54f6"
+      "sha256": "8250545b60fd0a472d1aac184cf2af50c403d2204f7b40898d54c388908c86f5"
     },
     {
       "path": "package.json",
-      "sha256": "be92aa5921f95badeac9cae33eb6aec0afe4953d5c74683bdc22d64c4ee04e5f"
+      "sha256": "e6bbedeca9f89664a99c2dde3d21cca802a97e126191121336dd02f9b38c5977"
     },
     {
       "path": "README.md",
-      "sha256": "362ae4d07f00d4c9440557390e4ac3922fd9b7951876e9f4c8e47dceb1f83144"
+      "sha256": "53eefc73e7a8dd6e764f6ccc82243a805b887128886421a6c77454c5bcba547e"
     },
     {
       "path": "skills/fnos-cli/entries/trim-app.md",
@@ -171,16 +171,36 @@
       "sha256": "144a2de411e3cb88f031dc2a5c15d1c735eb866bdf551cb98db8290e7f6eb66c"
     },
     {
+      "path": "skills/fnos-cli/runtime-manifest.json",
+      "sha256": "d8d4436306a312d42c7151ef46bb83ac31ac29e3cc1824c51a805d5511351d57"
+    },
+    {
+      "path": "skills/fnos-cli/runtime-setup.md",
+      "sha256": "631a4c69e7da2ec85f6f81b98d7eef3b3e9f7103d04cd5ad9805e2eb102d91be"
+    },
+    {
+      "path": "skills/fnos-cli/scripts/fnos-cli",
+      "sha256": "989f4921d5179a003bce0222be4429816dcfb0ea181be445a9af45e977ee4cbc"
+    },
+    {
+      "path": "skills/fnos-cli/scripts/fnos-cli.cmd",
+      "sha256": "e83566c363d8502b3abe49f6fc4b0f4611406bcdd1fd2d9ac6e847ef680300fb"
+    },
+    {
+      "path": "skills/fnos-cli/scripts/fnos-cli.ps1",
+      "sha256": "b8e11839d745dae08ffb7faf386c9a47ce4e6e0b0badbd39d769abc7740cd554"
+    },
+    {
       "path": "skills/fnos-cli/SKILL.md",
-      "sha256": "daf8794b960f74af24c3893e5f345e7a89bedc5f4c21054fd0648e1f48d30813"
+      "sha256": "8d080f541f082b206b956691726e2780e4e069377d135a9b612b37d5697fa870"
     },
     {
       "path": "skills/fnos-cli/THIRD_PARTY_NOTICES.txt",
-      "sha256": "6560c5a1462530ce63d24b9aec26706679b1ecf6433823cb6cde25295fe30a37"
+      "sha256": "3de3b3a26661a6c592d739b26510a4353df31fd57e77382837aa660f984f5edd"
     },
     {
       "path": "THIRD_PARTY_NOTICES.txt",
-      "sha256": "6560c5a1462530ce63d24b9aec26706679b1ecf6433823cb6cde25295fe30a37"
+      "sha256": "3de3b3a26661a6c592d739b26510a4353df31fd57e77382837aa660f984f5edd"
     }
   ]
 }

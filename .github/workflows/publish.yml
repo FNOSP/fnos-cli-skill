@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: Publish the exact validated candidate (requires product environment approval)
+        description: Publish the exact validated candidate after product checks
         type: boolean
         default: false
 permissions:
@@ -14,9 +14,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   verify:
-    # Restore pre-existing draft visibility: GitHub requires push access for drafts.
+    # Native assets are already anonymous before entry activation and dispatch.
     permissions:
-      contents: write
+      contents: read
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
@@ -30,8 +30,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --dir artifacts
-      - name: Verify product, source, hashes and GitLab three-platform evidence
-        run: node scripts/release.cjs verify
+      - name: Verify product, source, GitLab evidence and publication phase receipts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release.cjs verify-ready
   publish:
     needs: verify
     if: inputs.publish

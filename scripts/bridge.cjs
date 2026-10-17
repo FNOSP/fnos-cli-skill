@@ -5,7 +5,7 @@ const { product } = require("./products.cjs");
 
 const CONTROL_FILES = Object.freeze([
   ".gitattributes", ".github/workflows/publish.yml", "scripts/release.cjs", "scripts/bridge.cjs",
-  "release.json", "SHA256SUMS", "bridge-files.json", "scripts/products.cjs", "scripts/candidate-smoke-evidence.cjs",
+  "release.json", "SHA256SUMS", "bridge-files.json", "scripts/products.cjs", "scripts/npm-query.cjs", "scripts/candidate-smoke-evidence.cjs",
   "evidence/candidate.json", "evidence/gate.json", "evidence/darwin.json", "evidence/linux.json", "evidence/win32.json"
 ]);
 const BRIDGE_ROOT_FILES = Object.freeze([
@@ -16,7 +16,8 @@ const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
 function rootFiles(variant) { return product(variant).dsh ? BRIDGE_ROOT_FILES : ["README.md", "package.json", ".gitignore", "LICENSE", "THIRD_PARTY_NOTICES.txt"]; }
 function isBridgePath(name, variant = "fnos") {
   const id = product(variant);
-  return typeof name === "string" && (rootFiles(variant).includes(name)
+  const runtimePaths = ["runtime-manifest.json", "runtime-setup.md", ...["", ".cmd", ".ps1"].map(suffix => `scripts/${id.commandName}${suffix}`)].map(file => `skills/${id.commandName}/${file}`);
+  return typeof name === "string" && (rootFiles(variant).includes(name) || runtimePaths.includes(name)
     || new RegExp(`^skills/${id.commandName}/(SKILL\\.md|LICENSE|THIRD_PARTY_NOTICES\\.txt|(?:entries|reference)/[a-z0-9_-]+(?:/[a-z0-9_-]+)*\\.md)$`).test(name));
 }
 
@@ -37,10 +38,10 @@ function writeBridgeManifest(root, files, version) {
   return digest(fs.readFileSync(path.join(root, "bridge-files.json")));
 }
 
-function readBridge(root, release) {
+function readBridgeManifest(root, release) {
   const variant = release.variant || "fnos";
   const id = product(variant);
-  const required = [...rootFiles(variant), ...["SKILL.md", "LICENSE", "THIRD_PARTY_NOTICES.txt"].map(name => `skills/${id.commandName}/${name}`)];
+  const required = [...rootFiles(variant), ...["SKILL.md", "LICENSE", "THIRD_PARTY_NOTICES.txt", "runtime-manifest.json", "runtime-setup.md", `scripts/${id.commandName}`, `scripts/${id.commandName}.cmd`, `scripts/${id.commandName}.ps1`].map(name => `skills/${id.commandName}/${name}`)];
   const file = regularFile(root, "bridge-files.json");
   const bytes = fs.readFileSync(file);
   if (digest(bytes) !== release.bridgeManifestSha256) throw new Error("Public bridge manifest checksum mismatch");
@@ -52,6 +53,12 @@ function readBridge(root, release) {
     || required.some((name) => !manifest.files.some((item) => item.path === name))) {
     throw new Error("Invalid public bridge file allowlist");
   }
+  return manifest;
+}
+
+function readBridge(root, release) {
+  const id = product(release.variant || "fnos");
+  const manifest = readBridgeManifest(root, release);
   for (const item of manifest.files) {
     if (digest(fs.readFileSync(regularFile(root, item.path))) !== item.sha256) {
       throw new Error(`Public bridge checksum mismatch: ${item.path}`);
@@ -90,7 +97,8 @@ function copyBridge(source, destination, names, tracked = [], variant = "fnos") 
       regularFile(destination, name);
     } catch (error) { if (error.code !== "ENOENT") throw error; }
     fs.copyFileSync(regularFile(source, name), target);
+    if (/^skills\/[^/]+\/scripts\/[^/.]+$/.test(name)) fs.chmodSync(target, 0o755);
   }
 }
 
-module.exports = { CONTROL_FILES, isBridgePath, regularFile, writeBridgeManifest, readBridge, copyBridge };
+module.exports = { CONTROL_FILES, isBridgePath, regularFile, writeBridgeManifest, readBridgeManifest, readBridge, copyBridge };

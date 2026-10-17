@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {createHash} = require('node:crypto');
 const OPERATING_SYSTEMS = ['darwin', 'linux', 'win32'];
-const CHECKS = ['installed-shim-version', 'installed-shim-help', 'installed-skill', 'product-boundary', 'native-version-source'];
+const CHECKS = ['installed-shim-version', 'installed-shim-help', 'installed-skill', 'product-boundary', 'native-version-source', 'public-skill-installer', 'cold-host-download', 'hot-cache-reuse', 'standalone-skill-runtime', 'public-skill-runtime'];
 const digest = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const hash = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const nonempty = value => typeof value === 'string' && value.length > 0;
@@ -16,8 +16,8 @@ function candidateIdentity(file) {
   || value.locale !== (variant === 'fnos' ? 'zh-CN' : 'en') || value.repository !== `${scope}/${variant}-cli-skill`
   || !/^[a-f0-9]{40}$/.test(value.sourceCommit || '') || !hash(value.sourceSha256)
   || !['tagged', 'development'].includes(value.mode) || (value.mode === 'tagged' ? value.sourceTag !== `v${value.version}` : value.sourceTag !== null)) throw new Error('Invalid candidate product/source identity');
- const names = [`${scope}-${variant}-cli-${value.version}.tgz`, `${variant}-skill.zip`];
- if (!Array.isArray(value.assets) || value.assets.length !== 2 || value.assets.some((asset, index) => asset.name !== names[index] || !hash(asset.sha256))) throw new Error('Invalid candidate asset identity');
+ const names = [`${scope}-${variant}-cli-${value.version}.tgz`, `${variant}-skill.zip`, ...["darwin-arm64","darwin-x64","linux-arm64","linux-x64","windows-arm64","windows-x64"].map(platform=>`${variant}-cli-${value.version}-${platform}.gz`)];
+ if (!Array.isArray(value.assets) || value.assets.length !== names.length || value.assets.some((asset, index) => asset.name !== names[index] || !hash(asset.sha256))) throw new Error('Invalid candidate asset identity');
  return {sha256: digest(file), variant, packageName: value.packageName, commandName: value.commandName, skillName: value.skillName, locale: value.locale, repository: value.repository, version: value.version, sourceCommit: value.sourceCommit, sourceSha256: value.sourceSha256, mode: value.mode, sourceTag: value.sourceTag, assets: value.assets.map(({name,sha256}) => ({name,sha256}))};
 }
 function inspectReports(candidateFile, reportFiles, {requireCI = true} = {}) {
