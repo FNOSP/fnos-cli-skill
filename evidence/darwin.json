@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "kind": "installed-cli-smoke",
+  "result": "PASS",
+  "checkedAt": "2026-10-17T03:40:39.167Z",
+  "candidate": {
+    "sha256": "e11407fc4eee36045708bc36c1af8d59352dbde4e90fb738db984b856fa4c41c",
+    "variant": "fnos",
+    "packageName": "@fnnas-labs/fnos-cli",
+    "commandName": "fnos-cli",
+    "skillName": "fnos-cli",
+    "locale": "zh-CN",
+    "repository": "fnnas-labs/fnos-cli-skill",
+    "version": "0.5.0",
+    "sourceCommit": "1443bee208283a0ebd025a86b4e5b53a11f715ae",
+    "sourceSha256": "53829e556e9abcc84a074bfaa6100579d40927f2520af2e73826d170820518a7",
+    "mode": "tagged",
+    "sourceTag": "v0.5.0",
+    "assets": [
+      {
+        "name": "fnnas-labs-fnos-cli-0.5.0.tgz",
+        "sha256": "c0974012c1f9f6aadc6f2de517a613449c998c539663175e5a1fd03839816d96"
+      },
+      {
+        "name": "fnos-skill.zip",
+        "sha256": "de205aa3a95638f2a1a82445ab76157830c3cad9d3028a0978a6ac96aa071ea9"
+      },
+      {
+        "name": "fnos-cli-0.5.0-darwin-arm64.gz",
+        "sha256": "e2221508374e871a510c56c8bd2ec31b2f367904d54e92058df87b95c279bafb"
+      },
+      {
+        "name": "fnos-cli-0.5.0-darwin-x64.gz",
+        "sha256": "d26b84ed4aad17c74ce17ac0222a7dd8b63352477982898e8f93cf896e22fd8a"
+      },
+      {
+        "name": "fnos-cli-0.5.0-linux-arm64.gz",
+        "sha256": "209889e20c240fe0a917fdc66b63d358ebf46460fba83b7804b9f5ad08eab524"
+      },
+      {
+        "name": "fnos-cli-0.5.0-linux-x64.gz",
+        "sha256": "67a5c9059d06a2870783ecfbaf4f75c8229ddf0bfee39aec3e16e63982c823f1"
+      },
+      {
+        "name": "fnos-cli-0.5.0-windows-arm64.gz",
+        "sha256": "31c562439bedbcf517c0018002086ff24adc1a2b88416e43243c87607c556b98"
+      },
+      {
+        "name": "fnos-cli-0.5.0-windows-x64.gz",
+        "sha256": "aaef2aa1b761d0209830849a8294838182745e546794d7ae05f20596965d5200"
+      }
+    ]
+  },
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "machine": "arm64",
+    "release": "27.0.0",
+    "node": "v24.16.0",
+    "npm": "11.19.1",
+    "tools": {
+      "node": "/usr/local/bin/node",
+      "npm": "/usr/local/bin/npm",
+      "unzip": "/usr/bin/unzip"
+    }
+  },
+  "ci": {
+    "pipelineId": "11066",
+    "jobId": "34537",
+    "runnerId": "46",
+    "runnerArchitecture": "darwin/arm64",
+    "commit": "1443bee208283a0ebd025a86b4e5b53a11f715ae"
+  },
+  "publicSkill": {
+    "tool": "skills@1.7.2",
+    "filesCompared": 42,
+    "result": "PASS",
+    "execution": "passed: independent launcher cold download and hot cache without Node/npm on PATH"
+  },
+  "checks": [
+    "installed-shim-version",
+    "installed-shim-help",
+    "installed-skill",
+    "product-boundary",
+    "native-version-source",
+    "public-skill-installer",
+    "cold-host-download",
+    "hot-cache-reuse",
+    "standalone-skill-runtime",
+    "public-skill-runtime"
+  ],
+  "notVerified": [
+    "NAS/device operations",
+    "OAuth authorization",
+    "npm registry installation",
+    "live GitHub/npm binary mirror availability",
+    "other CPU architectures"
+  ]
+}
