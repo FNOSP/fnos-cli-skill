@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "product": "fnos",
+  "command": "fnos-cli",
+  "version": "0.5.0",
+  "githubRepository": "fnnas-labs/fnos-cli-skill",
+  "source": {
+    "commit": "1443bee208283a0ebd025a86b4e5b53a11f715ae",
+    "sha256": "53829e556e9abcc84a074bfaa6100579d40927f2520af2e73826d170820518a7"
+  },
+  "assets": {
+    "darwin-arm64": {
+      "name": "fnos-cli-0.5.0-darwin-arm64.gz",
+      "size": 3169138,
+      "sha256": "e2221508374e871a510c56c8bd2ec31b2f367904d54e92058df87b95c279bafb",
+      "binarySize": 8072448,
+      "binarySha256": "8f975e8a4e65d87415275f49b9b59d7c1a366f47a9aee3368c47b998b66e7ea6"
+    },
+    "darwin-x64": {
+      "name": "fnos-cli-0.5.0-darwin-x64.gz",
+      "size": 3257663,
+      "sha256": "d26b84ed4aad17c74ce17ac0222a7dd8b63352477982898e8f93cf896e22fd8a",
+      "binarySize": 8818400,
+      "binarySha256": "7f42be88e5e2f7abddcb3c23e2fab76665ace4f71782abe9ba5356fea22679f3"
+    },
+    "linux-arm64": {
+      "name": "fnos-cli-0.5.0-linux-arm64.gz",
+      "size": 2982668,
+      "sha256": "209889e20c240fe0a917fdc66b63d358ebf46460fba83b7804b9f5ad08eab524",
+      "binarySize": 6544752,
+      "binarySha256": "ffdd184be462975bffca493f4dca5dda789810b1f3ecded890961a5dd1409fc1"
+    },
+    "linux-x64": {
+      "name": "fnos-cli-0.5.0-linux-x64.gz",
+      "size": 3129004,
+      "sha256": "67a5c9059d06a2870783ecfbaf4f75c8229ddf0bfee39aec3e16e63982c823f1",
+      "binarySize": 7646320,
+      "binarySha256": "9acad5f7bde4b4b836696d56607058fbf42a58b79a8f45fe0df2f664ab8d2df9"
+    },
+    "windows-arm64": {
+      "name": "fnos-cli-0.5.0-windows-arm64.gz",
+      "size": 2736423,
+      "sha256": "31c562439bedbcf517c0018002086ff24adc1a2b88416e43243c87607c556b98",
+      "binarySize": 5673472,
+      "binarySha256": "54a2ab04a9c94c4762f4303a67528a72bbdbfe157dc75b92a350706bb159291f"
+    },
+    "windows-x64": {
+      "name": "fnos-cli-0.5.0-windows-x64.gz",
+      "size": 2858501,
+      "sha256": "aaef2aa1b761d0209830849a8294838182745e546794d7ae05f20596965d5200",
+      "binarySize": 6747136,
+      "binarySha256": "c2be7b2193d251b6eea662e908c6a9fee2e9e0ba843fbe3eab82e1dea936edcb"
+    }
+  }
+}

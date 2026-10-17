@@ -5,20 +5,17 @@ description: "使用 fnos-cli 授权并管理 fnOS 设备的文件、照片、�
 
 # fnOS
 
-## CLI 安装
-
-需要 Node.js 18+。安装或显式升级 CLI：
-
-```bash
-npm install -g @fnnas-labs/fnos-cli@latest
-fnos-cli --version
-```
-
-不全局安装时，将 `fnos-cli` 替换为 `npx -y --package=@fnnas-labs/fnos-cli@latest fnos-cli`。执行前检查相应 `--help`。npm 处理发布期间 `latest` 可能仍为上一版；现有安装不会自动更新。安装 Skill 不会自动安装 CLI 或登录设备；按下方授权说明让 Agent 生成链接，用户自行浏览器授权并回传一次性 code。
-
-
 使用 `fnos-cli` 管理设备。安装与升级都是显式操作；执行前检查实际版本和命令帮助。
 
+<!-- standalone:start -->
+## 独立 Skill 启动器
+
+从当前加载的 Skill 目录定位 `scripts/fnos-cli`（macOS/Linux）或 `scripts/fnos-cli.cmd`（Windows），使用绝对路径。将本 Skill 示例中的 `fnos-cli` 替换为该路径，保留每个参数及其引号。先执行 `--version` 和相关 `--help`。
+
+首次执行自动下载本机所需的一份固定版本 CLI；提示写入 stderr，成功后复用当前用户缓存。独立执行无需 Node/npm 或全局 CLI。macOS/Linux 需要系统的 curl、gzip、SHA-256 工具（sha256sum 或 shasum）及常用 shell 工具。下载失败、缓存损坏或镜像配置请读[首次运行指南](runtime-setup.md)，按其中步骤恢复后重试原命令。更新 Skill 是显式操作，已有入口不自动升级。
+
+Windows 可在 PowerShell 5.1 或 7 中调用 `scripts/fnos-cli.ps1`；`.cmd` 入口使用系统 Windows PowerShell。按当前 shell 规则传递参数，PowerShell 的 JSON 参数建议用单引号。Windows 使用系统 .NET 下载和解压，不需要 Unix 工具；缺少 PowerShell 或执行策略阻止启动时先处理本机环境，再重试原入口。
+<!-- standalone:end -->
 
 ## 授权与连接
 
