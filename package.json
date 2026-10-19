@@ -1,6 +1,6 @@
 {
   "name": "fnos-cli-skill",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "fnOS Skill and DSH bridge for the latest fnOS CLI package",
   "type": "module",
@@ -26,7 +26,6 @@
     "cordis.patch.yml",
     "npm/dsh.mjs",
     "skills/**",
-    "LICENSE",
-    "THIRD_PARTY_NOTICES.txt"
+    "LICENSE"
   ]
 }
