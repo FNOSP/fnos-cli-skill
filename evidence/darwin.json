@@ -2,52 +2,52 @@
   "schema": 1,
   "kind": "installed-cli-smoke",
   "result": "PASS",
-  "checkedAt": "2026-10-17T03:40:39.167Z",
+  "checkedAt": "2026-10-19T09:21:06.896Z",
   "candidate": {
-    "sha256": "e11407fc4eee36045708bc36c1af8d59352dbde4e90fb738db984b856fa4c41c",
+    "sha256": "2762b3e2dbb73ece02c7b92323739314af3ccb7adf3a9135aa02e1cd0ec4701f",
     "variant": "fnos",
     "packageName": "@fnnas-labs/fnos-cli",
     "commandName": "fnos-cli",
     "skillName": "fnos-cli",
     "locale": "zh-CN",
     "repository": "fnnas-labs/fnos-cli-skill",
-    "version": "0.5.0",
-    "sourceCommit": "1443bee208283a0ebd025a86b4e5b53a11f715ae",
-    "sourceSha256": "53829e556e9abcc84a074bfaa6100579d40927f2520af2e73826d170820518a7",
+    "version": "0.5.1",
+    "sourceCommit": "019b654b6431b40f2238213744389bd9974eaef6",
+    "sourceSha256": "1535c1369021b12878360e3930f6aa9ec610f26746fbfc0d2d126d75e8f0eee2",
     "mode": "tagged",
-    "sourceTag": "v0.5.0",
+    "sourceTag": "v0.5.1",
     "assets": [
       {
-        "name": "fnnas-labs-fnos-cli-0.5.0.tgz",
-        "sha256": "c0974012c1f9f6aadc6f2de517a613449c998c539663175e5a1fd03839816d96"
+        "name": "fnnas-labs-fnos-cli-0.5.1.tgz",
+        "sha256": "2e65b14c6cebeef5dd5b3d16ab08014001e6cd871713c8c6a25bd8e25d830af6"
       },
       {
         "name": "fnos-skill.zip",
-        "sha256": "de205aa3a95638f2a1a82445ab76157830c3cad9d3028a0978a6ac96aa071ea9"
+        "sha256": "318038b6e50599297dc83dc23550cc405a31dd3c062c7037c90b98383170cb2a"
       },
       {
-        "name": "fnos-cli-0.5.0-darwin-arm64.gz",
-        "sha256": "e2221508374e871a510c56c8bd2ec31b2f367904d54e92058df87b95c279bafb"
+        "name": "fnos-cli-0.5.1-darwin-arm64.gz",
+        "sha256": "9bd388844e202f034ee30027093da4f9e2c408ab4293e76a81fabb64a1f9a7fe"
       },
       {
-        "name": "fnos-cli-0.5.0-darwin-x64.gz",
-        "sha256": "d26b84ed4aad17c74ce17ac0222a7dd8b63352477982898e8f93cf896e22fd8a"
+        "name": "fnos-cli-0.5.1-darwin-x64.gz",
+        "sha256": "26106a5cc3113ffbd8a66948fb02bf16d17caae32082884d7c122b7aad55124c"
       },
       {
-        "name": "fnos-cli-0.5.0-linux-arm64.gz",
-        "sha256": "209889e20c240fe0a917fdc66b63d358ebf46460fba83b7804b9f5ad08eab524"
+        "name": "fnos-cli-0.5.1-linux-arm64.gz",
+        "sha256": "58db3d9f23f884a103b89af3b81de5b35aa520570df725f515e7b2e3d53b720d"
       },
       {
-        "name": "fnos-cli-0.5.0-linux-x64.gz",
-        "sha256": "67a5c9059d06a2870783ecfbaf4f75c8229ddf0bfee39aec3e16e63982c823f1"
+        "name": "fnos-cli-0.5.1-linux-x64.gz",
+        "sha256": "71bbf3947905c452f467841e200aa0994e04d0fa4470dfdc39fb79bf12cc74a6"
       },
       {
-        "name": "fnos-cli-0.5.0-windows-arm64.gz",
-        "sha256": "31c562439bedbcf517c0018002086ff24adc1a2b88416e43243c87607c556b98"
+        "name": "fnos-cli-0.5.1-windows-arm64.gz",
+        "sha256": "efc6cc23b71926197bfd15167359a82c92151c19a6a33fefdcb408299c51d656"
       },
       {
-        "name": "fnos-cli-0.5.0-windows-x64.gz",
-        "sha256": "aaef2aa1b761d0209830849a8294838182745e546794d7ae05f20596965d5200"
+        "name": "fnos-cli-0.5.1-windows-x64.gz",
+        "sha256": "61cecbce2434f1eb6edabefaa0664cae16d375e6fdd005250e40c1f4dce3bb58"
       }
     ]
   },
@@ -65,15 +65,15 @@
     }
   },
   "ci": {
-    "pipelineId": "11066",
-    "jobId": "34537",
+    "pipelineId": "11128",
+    "jobId": "34741",
     "runnerId": "46",
     "runnerArchitecture": "darwin/arm64",
-    "commit": "1443bee208283a0ebd025a86b4e5b53a11f715ae"
+    "commit": "019b654b6431b40f2238213744389bd9974eaef6"
   },
   "publicSkill": {
     "tool": "skills@1.7.2",
-    "filesCompared": 42,
+    "filesCompared": 41,
     "result": "PASS",
     "execution": "passed: independent launcher cold download and hot cache without Node/npm on PATH"
   },

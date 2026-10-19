@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.5.0",
+  "version": "0.5.1",
   "files": [
     {
       "path": ".gitignore",
@@ -24,7 +24,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "e6bbedeca9f89664a99c2dde3d21cca802a97e126191121336dd02f9b38c5977"
+      "sha256": "7ac13aae7a79c66e28f8ab6260122df22c6c998e0535e2ea077704b187f69c14"
     },
     {
       "path": "README.md",
@@ -172,7 +172,7 @@
     },
     {
       "path": "skills/fnos-cli/runtime-manifest.json",
-      "sha256": "d8d4436306a312d42c7151ef46bb83ac31ac29e3cc1824c51a805d5511351d57"
+      "sha256": "9848c6368879090da2f57ead7c829c9e3b7d041e51d88218b6c68d22425329cf"
     },
     {
       "path": "skills/fnos-cli/runtime-setup.md",
@@ -180,7 +180,7 @@
     },
     {
       "path": "skills/fnos-cli/scripts/fnos-cli",
-      "sha256": "989f4921d5179a003bce0222be4429816dcfb0ea181be445a9af45e977ee4cbc"
+      "sha256": "764ad2a6e6b8381521ac22a935e072754a40eaa3e5693312984ee0dc56586b62"
     },
     {
       "path": "skills/fnos-cli/scripts/fnos-cli.cmd",
@@ -188,19 +188,15 @@
     },
     {
       "path": "skills/fnos-cli/scripts/fnos-cli.ps1",
-      "sha256": "b8e11839d745dae08ffb7faf386c9a47ce4e6e0b0badbd39d769abc7740cd554"
+      "sha256": "a579c312a56187eb2c371de4c2f38a9da03493f94b8aa691bc37b17144396cac"
     },
     {
       "path": "skills/fnos-cli/SKILL.md",
       "sha256": "8d080f541f082b206b956691726e2780e4e069377d135a9b612b37d5697fa870"
     },
     {
-      "path": "skills/fnos-cli/THIRD_PARTY_NOTICES.txt",
-      "sha256": "3de3b3a26661a6c592d739b26510a4353df31fd57e77382837aa660f984f5edd"
-    },
-    {
       "path": "THIRD_PARTY_NOTICES.txt",
-      "sha256": "3de3b3a26661a6c592d739b26510a4353df31fd57e77382837aa660f984f5edd"
+      "sha256": "1b0d288d75ab3e202415d06b1ad2615aec97dd0954d6e669affc9b42bad89b74"
     }
   ]
 }

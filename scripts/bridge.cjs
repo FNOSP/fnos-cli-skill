@@ -41,7 +41,7 @@ function writeBridgeManifest(root, files, version) {
 function readBridgeManifest(root, release) {
   const variant = release.variant || "fnos";
   const id = product(variant);
-  const required = [...rootFiles(variant), ...["SKILL.md", "LICENSE", "THIRD_PARTY_NOTICES.txt", "runtime-manifest.json", "runtime-setup.md", `scripts/${id.commandName}`, `scripts/${id.commandName}.cmd`, `scripts/${id.commandName}.ps1`].map(name => `skills/${id.commandName}/${name}`)];
+  const required = [...rootFiles(variant), ...["SKILL.md", "LICENSE", "runtime-manifest.json", "runtime-setup.md", `scripts/${id.commandName}`, `scripts/${id.commandName}.cmd`, `scripts/${id.commandName}.ps1`].map(name => `skills/${id.commandName}/${name}`)];
   const file = regularFile(root, "bridge-files.json");
   const bytes = fs.readFileSync(file);
   if (digest(bytes) !== release.bridgeManifestSha256) throw new Error("Public bridge manifest checksum mismatch");
