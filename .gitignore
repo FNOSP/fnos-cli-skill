@@ -1,0 +1,19 @@
+# 依赖与构建产物
+node_modules/
+.docusaurus/
+build/
+
+# CI 拉取上游内容时的临时目录
+.skill-src/
+
+# 自动生成的参考手册（每次构建从 skills/fnos-cli 重新生成，不提交）
+docs/skill/
+sidebars.skill.generated.ts
+src/data/skillMeta.ts
+
+# 系统
+.DS_Store
+*.log
+
+# 本机构建时生成的临时脚本（可直接删除：rm scripts/_*.mjs）
+scripts/_*.mjs

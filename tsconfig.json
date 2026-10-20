@@ -1,0 +1,9 @@
+{
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "resolveJsonModule": true,
+    "strict": true
+  },
+  "exclude": ["build", ".docusaurus", "node_modules", "skill-snapshot"]
+}
