@@ -1,5 +1,5 @@
-# 依赖与构建产物
-node_modules/
+# 依赖与构建产物（node_modules 不加斜杠：本机可能是指向别处的软链接）
+node_modules
 .docusaurus/
 build/
 
