@@ -106,7 +106,7 @@ const config: Config = {
           label: '命令速查',
         },
         {
-          href: 'https://github.com/fnnas-labs/fnos-cli-skill',
+          href: 'https://github.com/fnosp/fnos-cli-skill',
           position: 'right',
           className: 'header-github-link',
           'aria-label': 'GitHub 仓库',
@@ -117,8 +117,8 @@ const config: Config = {
       style: 'light',
       logo: {
         alt: 'FNOSP',
-        src: 'img/logo.png',
-        width: 36,
+        src: 'img/FNOSP.png',
+        width: 650,
       },
       links: [
         {
@@ -131,14 +131,14 @@ const config: Config = {
           ],
         },
         {
-          title: '上游项目',
+          title: '开源 & 反馈',
           items: [
             {
-              label: 'fnnas-labs/fnos-cli-skill',
+              label: '上游项目 fnos-cli-skill',
               href: 'https://github.com/fnnas-labs/fnos-cli-skill',
             },
             {
-              label: '镜像仓库 FNOSP',
+              label: '社区镜像仓库 FNOSP',
               href: 'https://github.com/FNOSP/fnos-cli-skill',
             },
             {label: '问题反馈', href: 'https://github.com/fnnas-labs/fnos-cli-skill/issues'},
@@ -152,7 +152,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `本站为社区中文文档站，内容来自 fnos-cli-skill（MIT）。非飞牛官方站点。© ${new Date().getFullYear()}`,
+      copyright: `本站为社区中文文档站，内容来自官方 fnos-cli-skill 开源项目（MIT协议）。非飞牛官方站点。<br> © ${new Date().getFullYear()}`,
     },
     prism: {
       theme: prismThemes.github,

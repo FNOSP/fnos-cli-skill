@@ -162,12 +162,18 @@ export default function Home() {
                 fnos-cli 把 fnOS 的文件、照片、应用、Docker、存储、监控都变成命令；
                 配套的 Agent Skill 让模型知道该跑哪一条。这里是它的中文文档。
               </p>
+              <p className={styles.titleAccent}>
+                如本项目对您提供有效帮助，欢迎前往项目仓库点击 <strong>Start</strong> 给与支持。
+              </p>
               <div className={styles.ctaRow}>
                 <Link className={styles.btnPrimary} to="/docs/quickstart">
                   5 分钟上手 →
                 </Link>
                 <Link className={styles.btnGhost} to="/docs/cheatsheet">
                   命令速查表
+                </Link>
+                <Link className={styles.btnGhost} to="https://github.com/FNOSP/fnos-cli-skill">
+                  前往项目仓库
                 </Link>
               </div>
               <div className={styles.metaRow}>
@@ -181,7 +187,7 @@ export default function Home() {
                   <strong>{skillMeta.workflowCount}</strong> 条场景流程
                 </span>
                 <span>
-                  同步自 <strong>{skillMeta.sourceRepo}</strong>
+                  基于社区镜像仓库 <strong>自动构建文档</strong>
                 </span>
               </div>
             </div>
