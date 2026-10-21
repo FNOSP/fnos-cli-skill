@@ -1,0 +1,121 @@
+name: Deploy docs
+
+# 构建并发布文档站到 GitHub Pages。
+#
+# 内容来自 main 分支的 skills/fnos-cli（镜像流程维护的那份），
+# 站点源码来自 site 分支 —— 这样镜像流程的 force push 永远碰不到站点。
+#
+# 这份文件需要同时存在两个地方：
+#   site 分支：.github/workflows/deploy-docs.yml   → 处理 push 事件
+#   main 分支：.github/workflows/deploy-docs.yml   → 定时 / 手动触发只能从默认分支
+#
+# main 上那份是 sync-upstream.yml 每次同步时自动从本分支复制的产物：
+# 只改这里（site 分支），不要手改 main 上的——下次同步会被覆盖回去。
+
+on:
+  push:
+    branches: [site]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'static/**'
+      - 'scripts/**'
+      - 'skill-snapshot/**'
+      - 'docusaurus.config.ts'
+      - 'sidebars.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-docs.yml'
+  schedule:
+    # 每天 10:23 (UTC+8) 重新拉一次上游内容，防止镜像更新后站点没跟上
+    - cron: '23 2 * * *'
+  workflow_dispatch:
+
+# 换域名或换仓库时只改这两行
+env:
+  DOCS_URL: https://fnosp.github.io
+  DOCS_BASE_URL: /fnos-cli-skill/
+  NODE_VERSION: '22'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: docs-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout site branch
+        uses: actions/checkout@v4
+        with:
+          ref: site
+          fetch-depth: 1
+
+      - name: Fetch skill content from main
+        id: content
+        run: |
+          set -euo pipefail
+          if git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main 2>/dev/null \
+             && git ls-tree -r --name-only refs/remotes/origin/main -- skills/fnos-cli/SKILL.md | grep -q .; then
+            mkdir -p .skill-src
+            git archive refs/remotes/origin/main skills/fnos-cli | tar -x -C .skill-src
+            echo "SKILL_SOURCE=.skill-src/skills/fnos-cli" >> "$GITHUB_ENV"
+            echo "source=main" >> "$GITHUB_OUTPUT"
+            echo "已从 main 取到 skills/fnos-cli"
+          else
+            echo "SKILL_SOURCE=skill-snapshot" >> "$GITHUB_ENV"
+            echo "source=snapshot" >> "$GITHUB_OUTPUT"
+            echo "::warning title=使用快照构建::无法从 main 读取 skills/fnos-cli，本次用仓库内快照构建。"
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Sync skill docs
+        run: npm run sync
+
+      - name: Validate docs structure
+        run: npm run check
+
+      # prebuild 会再跑一次 sync（幂等），保证产物与校验内容一致
+      - name: Build
+        env:
+          DOCS_URL: ${{ env.DOCS_URL }}
+          DOCS_BASE_URL: ${{ env.DOCS_BASE_URL }}
+        run: |
+          npm run build
+          test -f build/index.html
+          test -f build/docs/skill/index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
