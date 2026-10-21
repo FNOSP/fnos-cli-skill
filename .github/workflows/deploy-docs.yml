@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout site branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: site
           fetch-depth: 1
@@ -75,7 +75,7 @@ jobs:
           fi
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -100,11 +100,51 @@ jobs:
           test -f build/index.html
           test -f build/docs/skill/index.html
 
+      # 提前查一次 Pages 状态。没启用时 configure-pages 只会抛一句
+      # "HttpError: Not Found"，看不出要改什么，所以这里先给出能照做的提示。
+      - name: Check Pages enablement
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -uo pipefail
+          api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pages"
+          body="$(mktemp)"
+          code="$(curl -sS -o "${body}" -w '%{http_code}' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${api}" 2>/dev/null || echo 000)"
+
+          case "${code}" in
+            200)
+              build_type="$(node -e 'const fs=require("fs");try{process.stdout.write(String((JSON.parse(fs.readFileSync(process.argv[1],"utf8"))||{}).build_type||""))}catch{}' "${body}")"
+              if [ "${build_type}" = "workflow" ]; then
+                echo "Pages 已启用，构建来源为 GitHub Actions，可以继续。"
+              else
+                echo "::error title=Pages 构建来源不是 GitHub Actions::当前 build_type=${build_type:-未知}。请到 Settings → Pages → Build and deployment → Source 改成 GitHub Actions（不要选 Deploy from a branch）。"
+                exit 1
+              fi
+              ;;
+            404)
+              echo "::error title=GitHub Pages 尚未启用::仓库 ${GITHUB_REPOSITORY} 还没有 Pages 站点。请到 Settings → Pages → Build and deployment → Source 选择 GitHub Actions，保存后重新运行本工作流（Re-run jobs 即可，无需改代码）。"
+              exit 1
+              ;;
+            403)
+              echo "::warning title=无法确认 Pages 状态::HTTP 403，token 权限不足以读取 Pages 配置。继续尝试部署。"
+              ;;
+            000)
+              echo "::warning title=无法确认 Pages 状态::请求 GitHub API 失败（网络或代理异常）。继续尝试部署。"
+              ;;
+            *)
+              echo "::warning title=无法确认 Pages 状态::HTTP ${code}，继续尝试部署。"
+              ;;
+          esac
+
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        id: pages
+        uses: actions/configure-pages@v6
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: build
 
@@ -118,4 +158,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
