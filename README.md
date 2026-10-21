@@ -159,6 +159,20 @@ and configured to build using GitHub Actions
 `build` 成功但 `deploy` 卡在 Waiting：仓库配了 `github-pages` 环境的保护规则。
 `Settings → Environments → github-pages → Deployment protection rules` 里去掉 Required reviewers 即可。
 
+### Deploy 一个步骤都没有就失败（拉日志返回 `BlobNotFound`）
+
+`github-pages` 环境默认带一条**分支白名单**，通常只允许 `main`。从 `site` 分支推上去的构建，
+`build` 全绿、`deploy` 却在启动阶段被拒：`jobs` 里该作业 `conclusion: failure` 但 `steps` 为空，
+日志接口返回 `BlobNotFound`，看起来很诡异，其实和 Pages 本身无关。
+
+两种修法：
+
+- 把 `site` 加进白名单（本仓库已经加过；`Settings → Environments → github-pages → Deployment branches and tags`，或用 API：`POST /repos/{owner}/{repo}/environments/github-pages/deployment-branch-policies`，body `{"name":"site","type":"branch"}`）；
+- 或者只让 `main` 部署：删掉工作流的 `push` 触发，全部走 `sync-upstream` 派发 + 每日定时。
+
+另外注意 `push` 触发带 `paths` 白名单：只改 `README.md`、或提交为空，都不会触发构建。
+
+
 ## 提交信息规范
 
 统一使用英文 Conventional Commits，格式 `<type>(<scope>): <subject>`：
