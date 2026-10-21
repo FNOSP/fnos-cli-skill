@@ -1,0 +1,294 @@
+name: Sync upstream (mirror)
+
+on:
+  schedule:
+    - cron: '17 1,7,13,19 * * *'
+  workflow_dispatch:
+    inputs:
+      mirror_releases:
+        description: 同步上游 Release（含产物）
+        type: boolean
+        default: true
+      repair_assets:
+        description: 已存在的 Release 也校验并补齐缺失产物
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPO: fnnas-labs/fnos-cli-skill
+  UPSTREAM_BRANCH: main
+  MIRROR_BRANCH: main
+
+jobs:
+  sync:
+    name: Sync code & tags
+    runs-on: ubuntu-latest
+    outputs:
+      upstream_sha: ${{ steps.mirror.outputs.upstream_sha }}
+    steps:
+      - name: Checkout mirror
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.MIRROR_BRANCH }}
+          fetch-depth: 0
+          token: ${{ secrets.SYNC_PAT || github.token }}
+
+      - name: Mirror upstream code and tags
+        id: mirror
+        run: |
+          set -euo pipefail
+
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          scope_hint_shown=0
+          hint_workflow_scope() {
+            [ "${scope_hint_shown}" = "1" ] && return 0
+            scope_hint_shown=1
+            echo "::error::推送被 GitHub 拒绝：token 缺少 workflow 权限。"
+            echo "  原因：要推送的上游历史里有对 .github/workflows/* 的改动（上游的 publish.yml），"
+            echo "        GitHub 只允许带 workflow 权限的 token 推送这类提交，permissions: 无法覆盖。"
+            echo "  修法：细粒度 PAT 把 Workflows 设为 Read and write（外加 Contents = Read and write）；"
+            echo "        或经典 PAT 勾选 repo + workflow scope。"
+            echo "  把新 PAT 存到仓库 secret SYNC_PAT 后重新运行本工作流。"
+          }
+
+          base_sha="$(git rev-parse HEAD)"
+
+          git remote add upstream "https://github.com/${UPSTREAM_REPO}.git" 2>/dev/null \
+            || git remote set-url upstream "https://github.com/${UPSTREAM_REPO}.git"
+
+          git fetch --force --no-tags upstream "${UPSTREAM_BRANCH}"
+          upstream_sha="$(git rev-parse FETCH_HEAD)"
+          echo "upstream_sha=${upstream_sha}" >> "$GITHUB_OUTPUT"
+          echo "上游最新提交: ${upstream_sha}"
+
+          git checkout --detach "${upstream_sha}"
+          rm -rf .github
+          git checkout "${base_sha}" -- .github
+
+          mkdir -p .github/workflows
+          if git fetch --no-tags origin site 2>/dev/null \
+             && git cat-file -e FETCH_HEAD:.github/workflows/deploy-docs.yml 2>/dev/null; then
+            git show FETCH_HEAD:.github/workflows/deploy-docs.yml > .github/workflows/deploy-docs.yml
+            docs_wf="synced"
+            echo "已从 site 分支同步 .github/workflows/deploy-docs.yml"
+          else
+            docs_wf="skipped"
+            echo "::warning title=未取到 deploy-docs.yml::site 分支不存在（或其中没有 .github/workflows/deploy-docs.yml），本次跳过文档站工作流同步，main 上保留原有文件。"
+          fi
+          echo "docs_wf=${docs_wf}" >> "$GITHUB_OUTPUT"
+
+          git add -A
+
+          if git diff --cached --quiet "${base_sha}" \
+             && git merge-base --is-ancestor "${upstream_sha}" "${base_sha}"; then
+            echo "内容与镜像分支一致，无需推送"
+            git reset --hard --quiet "${base_sha}"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore(mirror): sync ${UPSTREAM_REPO}@${upstream_sha:0:7}"
+            if push_out="$(git push --force origin "HEAD:${MIRROR_BRANCH}" 2>&1)"; then
+              echo "${push_out}"
+              echo "已推送镜像提交"
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "${push_out}"
+              case "${push_out}" in *"create or update workflow"*) hint_workflow_scope ;; esac
+              exit 1
+            fi
+          fi
+
+          git fetch --force --tags upstream
+
+          tags_pending=()
+          while IFS= read -r t; do
+            [ -n "${t}" ] || continue
+            local_rev="$(git rev-parse "refs/tags/${t}")"
+            remote_rev="$(git ls-remote --tags origin "refs/tags/${t}" | awk '{print $1}' | head -n 1)"
+            [ "${local_rev}" = "${remote_rev}" ] || tags_pending+=("${t}")
+          done < <(git tag --list)
+
+          echo "待推送标签: ${#tags_pending[@]} 个"
+
+          failed_tags=()
+          for t in ${tags_pending[@]+"${tags_pending[@]}"}; do
+            if [ "${scope_hint_shown}" = "1" ]; then
+              failed_tags+=("${t}")
+              continue
+            fi
+            if tag_out="$(git push --force origin "refs/tags/${t}" 2>&1)"; then
+              echo "标签已同步: ${t}"
+            else
+              echo "${tag_out}"
+              failed_tags+=("${t}")
+              case "${tag_out}" in *"create or update workflow"*) hint_workflow_scope ;; esac
+            fi
+          done
+
+          if [ ${#failed_tags[@]} -gt 0 ]; then
+            echo "::error::${#failed_tags[@]} 个标签推送失败: ${failed_tags[*]}"
+            echo "  这些标签对应的 Release 无法镜像，见下一步的报错。"
+            exit 1
+          fi
+          echo "标签已同步"
+
+      - name: Trigger docs deployment
+        if: ${{ !cancelled() && steps.mirror.outputs.changed == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT || github.token }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::warning title=无法派发文档站::没有可用的 token。"
+            exit 0
+          fi
+
+          for attempt in 1 2 3 4; do
+            if out="$(gh workflow run deploy-docs.yml --repo "${GITHUB_REPOSITORY}" --ref "${MIRROR_BRANCH}" 2>&1)"; then
+              echo "${out}"
+              echo "已派发 deploy-docs，文档站将基于最新 main 重建"
+              exit 0
+            fi
+            echo "第 ${attempt} 次派发失败: ${out}"
+            if [ "${attempt}" -lt 4 ]; then sleep 10; fi
+          done
+
+          echo "::warning title=文档站未触发::派发 deploy-docs 失败。常见原因：SYNC_PAT 未配置或缺少 Actions 权限；也可等每日定时任务，或在 Actions 页面手动运行 Deploy docs。"
+
+  releases:
+    name: Mirror releases
+    needs: sync
+    if: ${{ !cancelled() && (github.event_name != 'workflow_dispatch' || inputs.mirror_releases) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Mirror upstream releases and assets
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT || github.token }}
+          UPSTREAM_REPO: ${{ env.UPSTREAM_REPO }}
+          MIRROR_REPO: ${{ github.repository }}
+          REPAIR_ASSETS: ${{ inputs.repair_assets }}
+        run: |
+          set -euo pipefail
+
+          work="$(mktemp -d)"
+          trap 'rm -rf "$work"' EXIT
+          failed=()
+
+          repair="${REPAIR_ASSETS:-true}"
+
+          mapfile -t rows < <(
+            gh release list \
+              --repo "$UPSTREAM_REPO" \
+              --limit 200 \
+              --order asc \
+              --exclude-drafts \
+              --json tagName,isPrerelease \
+              --jq '.[] | [.tagName, (.isPrerelease|tostring)] | @tsv'
+          )
+
+          echo "上游共 ${#rows[@]} 个 Release"
+
+          for row in "${rows[@]}"; do
+            IFS=$'\t' read -r tag is_pre <<<"$row"
+            echo "::group::Release ${tag}"
+
+            if ! gh api "repos/${MIRROR_REPO}/git/ref/tags/${tag}" >/dev/null 2>&1; then
+              echo "::warning::标签 ${tag} 尚未同步到镜像仓库，跳过该 Release"
+              failed+=("${tag}: tag 未同步")
+              echo "::endgroup::"
+              continue
+            fi
+
+            mapfile -t upstream_assets < <(
+              gh release view "$tag" --repo "$UPSTREAM_REPO" --json assets --jq '.assets[].name'
+            )
+
+            dir="${work}/${tag}"
+            mkdir -p "$dir"
+
+            if gh release view "$tag" --repo "$MIRROR_REPO" >/dev/null 2>&1; then
+              if [ "$repair" != "true" ]; then
+                echo "Release 已存在，跳过"
+                echo "::endgroup::"
+                continue
+              fi
+
+              mapfile -t have < <(
+                gh release view "$tag" --repo "$MIRROR_REPO" --json assets --jq '.assets[].name'
+              )
+
+              missing=()
+              for a in ${upstream_assets[@]+"${upstream_assets[@]}"}; do
+                found=false
+                for b in ${have[@]+"${have[@]}"}; do
+                  if [ "$a" = "$b" ]; then found=true; break; fi
+                done
+                if [ "$found" = false ]; then missing+=("$a"); fi
+              done
+
+              if [ ${#missing[@]} -eq 0 ]; then
+                echo "Release 与产物均已存在，无需处理"
+                echo "::endgroup::"
+                continue
+              fi
+
+              echo "补齐产物: ${missing[*]}"
+              patterns=()
+              for a in "${missing[@]}"; do patterns+=(-p "$a"); done
+              gh release download "$tag" --repo "$UPSTREAM_REPO" --dir "$dir" "${patterns[@]}" --clobber
+              gh release upload "$tag" --repo "$MIRROR_REPO" --clobber -- "${dir}"/*
+            else
+              if [ ${#upstream_assets[@]} -gt 0 ]; then
+                patterns=()
+                for a in "${upstream_assets[@]}"; do patterns+=(-p "$a"); done
+                gh release download "$tag" --repo "$UPSTREAM_REPO" --dir "$dir" "${patterns[@]}" --clobber
+              else
+                echo "该 Release 没有产物"
+              fi
+
+              gh release view "$tag" --repo "$UPSTREAM_REPO" \
+                --json name,body > "${work}/meta.json"
+              title="$(jq -r '.name // ""' "${work}/meta.json")"
+              jq -r '.body // ""' "${work}/meta.json" > "${work}/notes.md"
+
+              args=(
+                --repo "$MIRROR_REPO"
+                --verify-tag
+                --title "${title:-$tag}"
+                --notes-file "${work}/notes.md"
+                --latest=false
+              )
+              if [ "$is_pre" = "true" ]; then args+=(--prerelease); fi
+
+              mapfile -d '' files < <(find "$dir" -maxdepth 1 -type f -print0 | sort -z)
+              gh release create "$tag" "${args[@]}" ${files[@]+"${files[@]}"}
+              echo "已创建镜像 Release: ${tag}"
+            fi
+
+            echo "::endgroup::"
+          done
+
+          latest_tag="$(gh api "repos/${UPSTREAM_REPO}/releases/latest" --jq '.tag_name' 2>/dev/null || true)"
+          if [ -n "$latest_tag" ] \
+             && gh release view "$latest_tag" --repo "$MIRROR_REPO" >/dev/null 2>&1; then
+            gh release edit "$latest_tag" --repo "$MIRROR_REPO" --latest \
+              && echo "Latest 标记已设置为 ${latest_tag}"
+          fi
+
+          if [ ${#failed[@]} -gt 0 ]; then
+            printf '::error::以下 Release 未镜像成功:\n'
+            printf '  - %s\n' "${failed[@]}"
+            exit 1
+          fi
