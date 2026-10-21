@@ -57,7 +57,7 @@ SKILL_SOURCE="$HOME/.claude/skills/fnos-cli" npm run start
 node scripts/sync-skill.mjs --source /path/to/skills/fnos-cli
 ```
 
-默认取内容顺序：`--source` / `SKILL_SOURCE` → `../skills/fnos-cli` → `./skills/fnos-cli` → `./skill-snapshot`。
+默认取内容顺序：`--source` / `SKILL_SOURCE` → `../skills/fnos-cli` → `./skills/fnos-cli` → `~/.skills-manager/skills/fnos-cli` → `~/.claude/skills/fnos-cli` → `./skill-snapshot`。
 
 > `scripts/_*.mjs` 是本机上生成过的临时脚本，已 gitignore，可以随手删掉：`rm scripts/_*.mjs`。
 
@@ -153,6 +153,28 @@ and configured to build using GitHub Actions
 
 只是警告，不影响运行。工作流里的 action 已升到 node24 版本：
 `checkout@v7`、`setup-node@v7`、`configure-pages@v6`、`upload-pages-artifact@v5`、`deploy-pages@v5`。
+
+### `npm run start` 报 `sh: docusaurus: command not found`
+
+包体装进去了、`node_modules/.bin/` 却是空的——npm 创建 bin 链接那一步被打断（本机沙箱拦截 `write-file-atomic` 的临时文件 + rename）。判断方法：
+
+```bash
+ls node_modules | wc -l        # 几百个
+ls node_modules/.bin | wc -l   # 0
+```
+
+补一个链接就能跑，不用重装：
+
+```bash
+mkdir -p node_modules/.bin
+ln -sf ../@docusaurus/core/bin/docusaurus.mjs node_modules/.bin/docusaurus
+```
+
+补完还报 `Cannot find module 'xxx'`（常见于 `chalk`、`braces`、`@jsonjoy.com/fs-*` 这类小包），说明包被解压截断了，只能干净重装：
+`rm -rf node_modules && npm ci`。
+
+> 注意 `build` 和 `start` 依赖的包不完全一样：`start` 多一条 webpack-dev-server 链路，
+> 所以可能出现「`npm run build` 能过、`npm run start` 挂」的情况，问题仍在依赖不完整，不在站点配置。
 
 ### Deploy 步骤报 `environment` 需要审批
 

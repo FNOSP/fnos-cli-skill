@@ -16,6 +16,7 @@
  */
 
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 
@@ -39,13 +40,16 @@ const log = (...a) => {
   if (!quiet) console.log('[sync-skill]', ...a);
 };
 
-/** 候选源目录：显式参数 > 仓库内 skills/fnos-cli > 本地快照 */
+/** 候选源目录：显式参数 > 仓库内 skills/fnos-cli > 本机已安装的 skill > 仓库内快照 */
 function resolveSource() {
   const candidates = sourceArg
     ? [path.resolve(SITE_ROOT, sourceArg)]
     : [
         path.resolve(SITE_ROOT, '..', 'skills', 'fnos-cli'),
         path.resolve(SITE_ROOT, 'skills', 'fnos-cli'),
+        // 本机装过 skill 就直接用，省得每次手写 --source
+        path.join(os.homedir(), '.skills-manager', 'skills', 'fnos-cli'),
+        path.join(os.homedir(), '.claude', 'skills', 'fnos-cli'),
         path.join(SITE_ROOT, 'skill-snapshot'),
       ];
   for (const dir of candidates) {
@@ -384,7 +388,7 @@ function main() {
       'const skillMeta = {',
       `  cliVersion: ${JSON.stringify(version)},`,
       `  commit: ${JSON.stringify(commit.slice(0, 7))},`,
-      `  sourceRepo: ${JSON.stringify(manifest.githubRepository ?? 'fnnas-labs/fnos-cli-skill')},`,
+      `  sourceRepo: ${JSON.stringify(manifest.githubRepository ?? 'fnosp/fnos-cli-skill')},`,
       `  syncedAt: ${JSON.stringify(new Date().toISOString().slice(0, 10))},`,
       `  totalDocs: ${allDocs.length},`,
       `  entryCount: ${collected.entries.length},`,
