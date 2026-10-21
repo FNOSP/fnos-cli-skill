@@ -66,6 +66,25 @@ site/
 镜像流程的同步逻辑是「重置工作区到上游快照，只保留 `.github/`，然后 force push 到 `main`」。任何放在 `main` 的站点文件都会被下一次同步清掉。放到 `site` 分支既躲开了 force push，也不用改动镜像流程本身。
 :::
 
+## 内容更新后什么时候上线
+
+四种触发方式，任选其一：
+
+| 触发 | 时机 | 说明 |
+| --- | --- | --- |
+| `push` 到 `site` 分支 | 改动了 `docs/`、`src/`、`static/`、`scripts/` 或站点配置 | 只有工作流 `paths` 白名单里的文件才会触发，例如只改 `README.md` 不会重建 |
+| 上游同步后派发 | `sync-upstream` 拉到新内容并推送成功 | 内容有变化才派发，没变化不白跑 |
+| 每日定时 | 每天 10:23（UTC+8） | 兜底，保证站点不会长期落后于上游 |
+| 手动 | `Actions → Deploy docs → Run workflow` | 想立刻重建时用 |
+
+## 提交规范
+
+仓库统一用英文 Conventional Commits，`<type>(<scope>): <subject>`，
+主题行不超过 72 字符、祈使句、小写开头、结尾不加句号，正文写「为什么」。
+
+站点内容是中文、提交信息是英文：这份历史也会出现在镜像仓库里，
+英文日志对上游使用者更友好，也方便按 `type` 过滤变更。
+
 ## 免责声明
 
 本站是社区维护的中文文档，内容来自 [`fnnas-labs/fnos-cli-skill`](https://github.com/fnnas-labs/fnos-cli-skill)（MIT 许可），**不是飞牛官方站点**。命令行为以你实际安装的 CLI 版本为准，遇到差异请以 `--help` 输出为准。
