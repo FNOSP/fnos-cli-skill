@@ -1,0 +1,226 @@
+/* ==========================================================================
+   fnos-cli 文档站样式
+   品牌色取自 FNOSP logo，浅色为默认，深色模式单独调过对比度。
+   ========================================================================== */
+
+:root {
+  --fn-brand: #1b5cf6;
+  --fn-brand-dark: #0f47d6;
+  --fn-brand-soft: #eaf0ff;
+  --fn-ink: #0c1730;
+  --fn-ink-soft: #4a5a78;
+  --fn-line: #e3e8f2;
+  --fn-line-soft: #eef2f9;
+  --fn-surface: #ffffff;
+  --fn-surface-alt: #f7f9fd;
+  --fn-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --ifm-color-primary: #1b5cf6;
+  --ifm-color-primary-dark: #1049d8;
+  --ifm-color-primary-darker: #0f47d6;
+  --ifm-color-primary-darkest: #0c3aaf;
+  --ifm-color-primary-light: #3a74f8;
+  --ifm-color-primary-lighter: #5184f9;
+  --ifm-color-primary-lightest: #89a9fb;
+
+  --ifm-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --ifm-font-family-monospace: var(--fn-mono);
+  --ifm-code-font-size: 90%;
+  --ifm-heading-font-weight: 650;
+  --ifm-line-height-base: 1.75;
+  --ifm-background-color: var(--fn-surface);
+  --ifm-navbar-shadow: none;
+  --ifm-toc-border-color: var(--fn-line);
+  --docusaurus-highlighted-code-line-bg: rgba(27, 92, 246, 0.1);
+}
+
+[data-theme='dark'] {
+  --fn-brand: #6d95ff;
+  --fn-brand-dark: #4d7dff;
+  --fn-brand-soft: rgba(109, 149, 255, 0.14);
+  --fn-ink: #edf2ff;
+  --fn-ink-soft: #a5b3cc;
+  --fn-line: #26304a;
+  --fn-line-soft: #1e2740;
+  --fn-surface: #0e1526;
+  --fn-surface-alt: #131c31;
+
+  --ifm-color-primary: #6d95ff;
+  --ifm-color-primary-dark: #4d7dff;
+  --ifm-color-primary-darker: #3d71ff;
+  --ifm-color-primary-darkest: #1b5cf6;
+  --ifm-color-primary-light: #8dabff;
+  --ifm-color-primary-lighter: #9db8ff;
+  --ifm-color-primary-lightest: #cbdbff;
+  --ifm-background-color: #0b1120;
+  --docusaurus-highlighted-code-line-bg: rgba(109, 149, 255, 0.16);
+}
+
+/* ---------------------------------------------------------------- 导航栏 */
+
+.navbar {
+  border-bottom: 1px solid var(--fn-line);
+  backdrop-filter: saturate(180%) blur(12px);
+  background-color: rgba(255, 255, 255, 0.86);
+}
+
+[data-theme='dark'] .navbar {
+  background-color: rgba(11, 17, 32, 0.86);
+}
+
+.navbar__title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.navbar__logo img {
+  border-radius: 7px;
+}
+
+.navbar__link {
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.header-github-link::before {
+  content: '';
+  width: 22px;
+  height: 22px;
+  display: block;
+  background-color: var(--fn-ink);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  transition: background-color 0.15s ease;
+}
+
+.header-github-link:hover::before {
+  background-color: var(--fn-brand);
+}
+
+/* ---------------------------------------------------------------- 正文排版 */
+
+.markdown h1:first-child {
+  letter-spacing: -0.02em;
+}
+
+.markdown h2 {
+  margin-top: 2.6rem;
+  padding-top: 0.2rem;
+  letter-spacing: -0.01em;
+}
+
+.markdown > h2::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--fn-brand);
+  margin-bottom: 0.85rem;
+}
+
+.markdown table {
+  display: table;
+  width: 100%;
+  font-size: 0.9rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--fn-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.markdown table thead tr {
+  background: var(--fn-surface-alt);
+}
+
+.markdown table th,
+.markdown table td {
+  border: none;
+  border-bottom: 1px solid var(--fn-line-soft);
+  padding: 0.6rem 0.85rem;
+  vertical-align: top;
+}
+
+.markdown table tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown table th {
+  font-weight: 600;
+  color: var(--fn-ink);
+  white-space: nowrap;
+}
+
+.markdown code {
+  border: 1px solid var(--fn-line);
+  background: var(--fn-surface-alt);
+  padding: 0.1rem 0.34rem;
+  border-radius: 5px;
+}
+
+.markdown pre code {
+  border: none;
+  background:transparent;
+  padding: 0;
+}
+
+.theme-code-block {
+  border: 1px solid var(--fn-line);
+  border-radius: 10px;
+  box-shadow: none !important;
+}
+
+/* 侧边栏 */
+.menu__link {
+  font-size: 0.9rem;
+  border-radius: 6px;
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  font-weight: 600;
+}
+
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--fn-line) !important;
+}
+
+/* 提示框圆角 */
+.theme-admonition {
+  border-radius: 10px;
+  border-left-width: 4px;
+}
+
+/* 面包屑 */
+.breadcrumbs__link {
+  font-size: 0.82rem;
+}
+
+/* ---------------------------------------------------------------- 页脚 */
+
+.footer {
+  border-top: 1px solid var(--fn-line);
+  background: var(--fn-surface-alt) !important;
+  padding: 3rem 0 2rem;
+}
+
+.footer__title {
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fn-ink-soft);
+}
+
+.footer__link-item {
+  font-size: 0.9rem;
+}
+
+.footer__copyright {
+  font-size: 0.82rem;
+  color: var(--fn-ink-soft);
+  border-top: 1px solid var(--fn-line);
+  padding-top: 1.4rem;
+  margin-top: 1rem;
+}

@@ -1,0 +1,474 @@
+/* 首页样式：自定义 Hero + 模块矩阵 + 上手三步 */
+
+.page {
+  --gutter: 24px;
+  overflow-x: clip;
+}
+
+.shell {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* ------------------------------------------------------------------ Hero */
+
+.hero {
+  position: relative;
+  padding: 88px 0 76px;
+  border-bottom: 1px solid var(--fn-line);
+  background:
+    radial-gradient(760px 380px at 12% -8%, rgba(27, 92, 246, 0.12), transparent 68%),
+    radial-gradient(620px 320px at 92% 6%, rgba(27, 92, 246, 0.08), transparent 70%),
+    var(--fn-surface);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(var(--fn-line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--fn-line-soft) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(560px 300px at 20% 0%, #000 10%, transparent 78%);
+  opacity: 0.9;
+}
+
+.heroInner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 56px;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 8px;
+  border: 1px solid var(--fn-line);
+  border-radius: 999px;
+  background: var(--fn-surface);
+  font-size: 0.78rem;
+  color: var(--fn-ink-soft);
+  font-weight: 500;
+}
+
+.badgeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16c47f;
+  box-shadow: 0 0 0 3px rgba(22, 196, 127, 0.16);
+}
+
+.title {
+  margin: 20px 0 0;
+  font-size: clamp(2.1rem, 4.4vw, 3.15rem);
+  line-height: 1.16;
+  letter-spacing: -0.035em;
+  font-weight: 720;
+  color: var(--fn-ink);
+}
+
+.titleAccent {
+  color: var(--fn-brand);
+}
+
+.subtitle {
+  margin: 18px 0 0;
+  font-size: 1.06rem;
+  line-height: 1.72;
+  color: var(--fn-ink-soft);
+  max-width: 34em;
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.btnPrimary,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.68rem 1.25rem;
+  border-radius: 9px;
+  font-size: 0.94rem;
+  font-weight: 600;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
+}
+
+.btnPrimary {
+  background: var(--fn-brand);
+  color: #fff;
+  box-shadow: 0 8px 20px -10px rgba(27, 92, 246, 0.7);
+}
+
+.btnPrimary:hover {
+  background: var(--fn-brand-dark);
+  color: #fff;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.btnGhost {
+  border: 1px solid var(--fn-line);
+  color: var(--fn-ink);
+  background: var(--fn-surface);
+}
+
+.btnGhost:hover {
+  border-color: var(--fn-brand);
+  color: var(--fn-brand);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 26px;
+  font-size: 0.82rem;
+  color: var(--fn-ink-soft);
+}
+
+.metaRow strong {
+  color: var(--fn-ink);
+  font-weight: 600;
+}
+
+/* 终端卡片 */
+.terminal {
+  border-radius: 14px;
+  border: 1px solid #1e2a45;
+  background: #0b1224;
+  box-shadow: 0 24px 60px -32px rgba(9, 18, 38, 0.65);
+  overflow: hidden;
+}
+
+.termBar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.termDots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.termTitle {
+  margin-left: auto;
+  font-family: var(--fn-mono);
+  font-size: 0.72rem;
+  color: #7d8aa8;
+  letter-spacing: 0.04em;
+}
+
+.termBody {
+  padding: 18px 20px 22px;
+  font-family: var(--fn-mono);
+  font-size: 0.8rem;
+  line-height: 1.95;
+  color: #c8d3ea;
+  overflow-x: auto;
+}
+
+.termLine {
+  white-space: pre;
+}
+
+.prompt {
+  color: #6f8fd6;
+  margin-right: 8px;
+  user-select: none;
+}
+
+.cmd {
+  color: #eaf1ff;
+}
+
+.flag {
+  color: #7ee2a8;
+}
+
+.str {
+  color: #ffcc85;
+}
+
+.out {
+  color: #7d8aa8;
+}
+
+.cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  background: #6f8fd6;
+  vertical-align: -2px;
+  animation: blink 1.15s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------- 通用小节 */
+
+.section {
+  padding: 72px 0;
+}
+
+.sectionAlt {
+  background: var(--fn-surface-alt);
+  border-top: 1px solid var(--fn-line);
+  border-bottom: 1px solid var(--fn-line);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 34px;
+}
+
+.eyebrow {
+  font-family: var(--fn-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fn-brand);
+  margin: 0 0 10px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.6vw, 1.9rem);
+  letter-spacing: -0.025em;
+  color: var(--fn-ink);
+}
+
+.sectionDesc {
+  margin: 10px 0 0;
+  color: var(--fn-ink-soft);
+  font-size: 0.95rem;
+  max-width: 46em;
+}
+
+.sectionLink {
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* 模块矩阵 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(252px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  position: relative;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--fn-line);
+  border-radius: 12px;
+  background: var(--fn-surface);
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.card:hover {
+  border-color: var(--fn-brand);
+  text-decoration: none;
+  color: inherit;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -22px rgba(12, 23, 48, 0.4);
+}
+
+.cardIndex {
+  font-family: var(--fn-mono);
+  font-size: 0.7rem;
+  color: var(--fn-brand);
+  letter-spacing: 0.06em;
+}
+
+.cardTitle {
+  margin: 8px 0 6px;
+  font-size: 1rem;
+  font-weight: 650;
+  color: var(--fn-ink);
+}
+
+.cardDesc {
+  margin: 0;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: var(--fn-ink-soft);
+}
+
+/* 两条路径 */
+.paths {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.pathCard {
+  padding: 26px;
+  border: 1px solid var(--fn-line);
+  border-radius: 14px;
+  background: var(--fn-surface);
+}
+
+.pathTag {
+  display: inline-block;
+  font-family: var(--fn-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: var(--fn-brand-soft);
+  color: var(--fn-brand);
+  margin-bottom: 14px;
+}
+
+.pathTitle {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: var(--fn-ink);
+}
+
+.pathText {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--fn-ink-soft);
+}
+
+.codeInline {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #0b1224;
+  color: #dfe8fb;
+  font-family: var(--fn-mono);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* 上手三步 */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  padding: 24px 22px;
+  border: 1px solid var(--fn-line);
+  border-radius: 14px;
+  background: var(--fn-surface);
+}
+
+.stepNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--fn-brand);
+  color: #fff;
+  font-family: var(--fn-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.stepTitle {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: var(--fn-ink);
+}
+
+.stepText {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.72;
+  color: var(--fn-ink-soft);
+}
+
+/* 底部长条 */
+.ctaBar {
+  margin: 12px 0 0;
+  padding: 34px 32px;
+  border-radius: 16px;
+  border: 1px solid var(--fn-line);
+  background:
+    radial-gradient(420px 200px at 88% -10%, rgba(27, 92, 246, 0.16), transparent 70%),
+    var(--fn-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.ctaBarTitle {
+  margin: 0 0 6px;
+  font-size: 1.25rem;
+  color: var(--fn-ink);
+}
+
+.ctaBarText {
+  margin: 0;
+  color: var(--fn-ink-soft);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 996px) {
+  .heroInner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+
+  .hero {
+    padding: 56px 0 52px;
+  }
+
+  .paths,
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .section {
+    padding: 52px 0;
+  }
+
+  .sectionHead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
