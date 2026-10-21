@@ -159,3 +159,30 @@ and configured to build using GitHub Actions
 `build` 成功但 `deploy` 卡在 Waiting：仓库配了 `github-pages` 环境的保护规则。
 `Settings → Environments → github-pages → Deployment protection rules` 里去掉 Required reviewers 即可。
 
+## 提交信息规范
+
+统一使用英文 Conventional Commits，格式 `<type>(<scope>): <subject>`：
+
+- 主题行不超过 72 字符，祈使句、小写开头、结尾不加句号
+- 正文说明「为什么」，每行 72 字符内换行，要点用 `-` 列表
+- 一个提交只做一件事，方便 review 和回滚
+
+| type | 用途 |
+| --- | --- |
+| `feat` | 新增能力：页面、脚本、构建行为 |
+| `fix` | 修复缺陷 |
+| `docs` | 只改文档 |
+| `ci` | 工作流 |
+| `refactor` | 不改行为的重构 |
+| `chore` | 脚手架、依赖、快照等杂项 |
+
+scope 用模块名：`site` / `sync` / `guide` / `brand` / `check` / `ci` / `deps` / `snapshot` / `readme`。
+
+```text
+feat(sync): generate the reference section from the Agent docs
+ci(pages): fail fast when Pages is disabled, bump actions
+docs(guide): add the safety model and command cheatsheet
+chore(deps): commit the lockfile for reproducible installs
+```
+
+提交信息用英文、站点内容用中文：这个分支也会被镜像仓库的使用者浏览，英文日志在他们的 `git log` 里不需要额外翻译。
