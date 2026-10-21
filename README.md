@@ -119,3 +119,43 @@ node scripts/sync-skill.mjs --source /path/to/skills/fnos-cli
 | 导航栏、页脚、搜索 | `docusaurus.config.ts` |
 | 参考区任何文字 | **不要改**，去改上游 `skills/fnos-cli/` |
 | 侧边栏顺序 | `scripts/sync-skill.mjs` 里的 `ENTRY_ORDER` / `MODULE_ORDER` |
+
+## 排错
+
+### `Get Pages site failed ... HttpError: Not Found`（Build 56 秒就红）
+
+```
+HttpError: Not Found - https://docs.github.com/rest/pages#get-a-pages-site
+Get Pages site failed. Please verify that the repository has Pages enabled
+and configured to build using GitHub Actions
+```
+
+**这不是构建失败**——报错来自 `configure-pages`，前面 `npm ci / sync / check / build` 全都过了。
+意思是仓库还没开 Pages（`GET /repos/{owner}/{repo}/pages` 返回 404）。
+
+修法：`Settings → Pages → Build and deployment → Source` 选 **GitHub Actions**（不是 “Deploy from a branch”），
+保存后回到 Actions 点 **Re-run jobs**，不用改代码、不用重新推送。
+
+工作流里已加了一步 `Check Pages enablement` 做预检，之后遇到这两种情况会直接给出可照做的提示，
+而不是一句 `HttpError`：
+
+| 接口返回 | 提示 |
+| --- | --- |
+| 404 | Pages 尚未启用 → 去 Settings → Pages 选 GitHub Actions |
+| 200 但 `build_type=legacy` | 构建来源是分支部署 → 改成 GitHub Actions |
+| 403 / 网络异常 | 只警告，继续尝试部署（不误伤） |
+
+> 为什么不用 `configure-pages` 的 `enablement: true` 自动开？它明确要求**非 `GITHUB_TOKEN` 的 token**
+> （PAT 需 `repo` 或 Pages 写权限，App 需 `administration:write` + `pages:write`）。
+> 用内置 token 开不了，所以这一步只能手工点一次。
+
+### `Node.js 20 is deprecated ... forced to run on Node.js 24`
+
+只是警告，不影响运行。工作流里的 action 已升到 node24 版本：
+`checkout@v7`、`setup-node@v7`、`configure-pages@v6`、`upload-pages-artifact@v5`、`deploy-pages@v5`。
+
+### Deploy 步骤报 `environment` 需要审批
+
+`build` 成功但 `deploy` 卡在 Waiting：仓库配了 `github-pages` 环境的保护规则。
+`Settings → Environments → github-pages → Deployment protection rules` 里去掉 Required reviewers 即可。
+
