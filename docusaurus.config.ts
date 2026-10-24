@@ -9,7 +9,7 @@ const BASE_URL = process.env.DOCS_BASE_URL ?? '/fnos-cli-skill/';
 const config: Config = {
   title: 'fnos-cli 中文文档',
   tagline: '用命令行和 AI Agent 管理飞牛 fnOS：文件、照片、应用、Docker、存储、监控',
-  favicon: 'img/favicon.png',
+  favicon: 'img/logo.png',
 
   url: SITE_URL,
   baseUrl: BASE_URL,

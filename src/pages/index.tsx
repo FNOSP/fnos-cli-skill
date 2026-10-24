@@ -163,7 +163,7 @@ export default function Home() {
                 配套的 Agent Skill 让模型知道该跑哪一条。这里是它的中文文档。
               </p>
               <p className={styles.titleAccent}>
-                如本项目对您提供有效帮助，欢迎前往项目仓库点击 <strong>Start</strong> 给与支持。
+                如本项目对您提供有效帮助，欢迎前往项目仓库点击 <strong>🌟 Star</strong> 给与支持。
               </p>
               <div className={styles.ctaRow}>
                 <Link className={styles.btnPrimary} to="/docs/quickstart">
